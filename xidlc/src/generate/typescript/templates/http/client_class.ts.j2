@@ -51,14 +51,23 @@ export class {{ client_name }}Client {
         {% else %}{% if method.body_single %}const body = {% if method.request_schema_ref %}parsed{% else %}{{ method.body_single }}{% endif %};
         {% elif method.body_entries | length > 0 %}const body = { {% for entry in method.body_entries %}"{{ entry.raw_name }}": {% if method.request_schema_ref %}parsed["{{ entry.key_name }}"]{% else %}{{ entry.access }}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %} };
         {% endif %}{% if method.body_single or method.body_entries | length > 0 %}headers.set("Content-Type", "{{ method.request_content_type }}");
-        {% endif %}headers.set("Accept", "{{ method.response_content_type }}");
+        {% endif %}headers.set("Accept", "{% if method.representations | length > 0 %}{{ method.union_accept }}{% else %}{{ method.response_content_type }}{% endif %}");
         const resp = await this.fetchImpl(url, { method: "{{ method.http_method }}", headers{% if method.body_single or method.body_entries | length > 0 %}, body: encodeRequestBody(body, "{{ method.request_content_type }}", this.codecs, {% if method.body_schema_ref %}ifaceSchemas.{{ method.body_schema_ref }}Schema{% else %}undefined{% endif %}){% endif %} });
         if (!resp.ok) {
             {% if method.raises | length > 0 %}await this.{{ method.raise_helper }}(resp);
             {% else %}throw await parseXidlError(resp);
             {% endif %}
         }
-        {% if method.response_schema_ref %}const responseBody = await decodeOptionalResponseBody(resp, "{{ method.response_content_type }}", this.codecs, ifaceSchemas.{{ method.response_schema_ref }}Schema);
+        {% if method.representations | length > 0 %}
+        const contentType = (resp.headers.get("Content-Type") ?? "").split(";")[0].trim();
+        {% for repr in method.representations %}
+        if (contentType === "{{ repr.content_type }}") {
+            const value = {% if repr.is_byte %}new Uint8Array(await resp.arrayBuffer());{% else %}await resp.json();{% endif %}
+            return { kind: "{{ repr.kind }}", value{% for binding in method.union_header_out %}, {{ binding.name }}: readResponseHeader(resp.headers, "{{ binding.wire }}", false) as never{% endfor %} } as {{ render_type(method.return_ty) }};
+        }
+        {% endfor %}
+        throw await parseXidlError(resp);
+        {% elif method.response_schema_ref %}const responseBody = await decodeOptionalResponseBody(resp, "{{ method.response_content_type }}", this.codecs, ifaceSchemas.{{ method.response_schema_ref }}Schema);
         const responsePayload = buildResponsePayload(responseBody, resp, "{{ method.response_body_mode }}", [{% for param in method.response_header_params %}{ name: "{{ param.raw_name }}", key: "{{ param.key_name }}", optional: {{ param.optional | lower }}, isMulti: {{ param.is_multi | lower }} }{% if not loop.last %}, {% endif %}{% endfor %}], [{% for param in method.response_cookie_params %}{ name: "{{ param.raw_name }}", key: "{{ param.key_name }}", optional: {{ param.optional | lower }}, isMulti: {{ param.is_multi | lower }} }{% if not loop.last %}, {% endif %}{% endfor %}]);
         return deserialize(responsePayload, ifaceSchemas.{{ method.response_schema_ref }}Schema) as {{ render_type(method.return_ty) }};
         {% elif method.return_ty.kind == "Void" %}return;

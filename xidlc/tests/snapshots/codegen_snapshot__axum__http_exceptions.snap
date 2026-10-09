@@ -69,6 +69,7 @@ impl From<xidl_rust_axum::Error> for FilesGetFileError {
         Self::Framework(err)
     }
 }
+#[allow(unused_mut)]
 impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetFileError {
     fn into_response(self) -> ::xidl_rust_axum::axum::response::Response {
         match self {
@@ -161,6 +162,7 @@ impl From<xidl_rust_axum::Error> for FilesDeleteFileError {
         Self::Framework(err)
     }
 }
+#[allow(unused_mut)]
 impl ::xidl_rust_axum::axum::response::IntoResponse for FilesDeleteFileError {
     fn into_response(self) -> ::xidl_rust_axum::axum::response::Response {
         match self {

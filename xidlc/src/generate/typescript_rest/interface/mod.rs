@@ -5,12 +5,15 @@ mod websocket_helpers;
 use super::model::{
     ClientClassContext, MethodModel, PathParamContext, RequestPayloadEntry,
     TsExceptionFieldContext, TsExceptionMemberContext, TsHttpBlocks, TsRaisesContext,
+    TsRepresentationContext,
 };
 use super::server::ServerClass;
 use crate::error::IdlcResult;
 use crate::generate::typescript::TypescriptRenderer;
 use crate::generate::typescript::definition::TypeRefTarget;
-use crate::generate::typescript::definition::contexts::{ParamDeclContext, TsType};
+use crate::generate::typescript::definition::contexts::{
+    FieldTypeContext, ParamDeclContext, TsType,
+};
 use crate::generate::typescript::definition::names::{method_struct_prefix, scoped_name, ts_ident};
 use crate::generate::typescript::definition::type_expr::{
     ts_type_for_type_spec, zod_schema_for_type_spec_with_prefix,
@@ -135,16 +138,79 @@ fn build_method_model(
         .as_ref()
         .map(|name| scoped_name(module_path, name));
 
-    let mut return_ty = response_name
-        .as_ref()
-        .map(|name| TsType::ScopedName(format!("ifaceTypes.{}", scoped_name(module_path, name))))
-        .or_else(|| {
-            op.signature
-                .return_type
-                .as_ref()
-                .map(|ty| ts_type_for_type_spec(ty, module_path, TypeRefTarget::Client))
+    let representations: Vec<TsRepresentationContext> = op
+        .http
+        .response
+        .representations
+        .iter()
+        .map(|repr| TsRepresentationContext {
+            kind: repr.case.clone(),
+            content_type: repr.content_type.clone(),
+            value_ty: ts_type_for_type_spec(&repr.ty, module_path, TypeRefTarget::Client),
+            is_byte: repr.is_byte,
         })
-        .unwrap_or(TsType::Void);
+        .collect();
+    let union_wrapper = (!representations.is_empty()).then(|| {
+        let header_out_fields: Vec<FieldTypeContext> = op
+            .http
+            .response
+            .header
+            .iter()
+            .filter_map(|binding| match &binding.source {
+                xidl_parser::rest_hir::HttpOutputSource::Param { name } => Some(FieldTypeContext {
+                    prop: name.clone(),
+                    ty: TsType::Primitive("string".to_string()),
+                    optional: false,
+                    doc: Vec::new(),
+                }),
+                xidl_parser::rest_hir::HttpOutputSource::ReturnValue => None,
+            })
+            .collect();
+        TsType::Union(
+            representations
+                .iter()
+                .map(|repr| {
+                    let mut fields = vec![
+                        FieldTypeContext {
+                            prop: "kind".to_string(),
+                            ty: TsType::Primitive(format!("\"{}\"", repr.kind)),
+                            optional: false,
+                            doc: Vec::new(),
+                        },
+                        FieldTypeContext {
+                            prop: "value".to_string(),
+                            ty: if repr.is_byte {
+                                TsType::Primitive("Uint8Array".to_string())
+                            } else {
+                                repr.value_ty.clone()
+                            },
+                            optional: false,
+                            doc: Vec::new(),
+                        },
+                    ];
+                    fields.extend(header_out_fields.iter().cloned());
+                    TsType::InlineStruct(fields)
+                })
+                .collect(),
+        )
+    });
+
+    let mut return_ty = if let Some(wrapper) = &union_wrapper {
+        wrapper.clone()
+    } else {
+        response_name
+            .as_ref()
+            .map(|name| {
+                TsType::ScopedName(format!("ifaceTypes.{}", scoped_name(module_path, name)))
+            })
+            .or_else(|| {
+                op.signature
+                    .return_type
+                    .as_ref()
+                    .map(|ty| ts_type_for_type_spec(ty, module_path, TypeRefTarget::Client))
+            })
+            .unwrap_or(TsType::Void)
+    };
     if matches!(
         op.meta.stream.kind,
         Some(xidl_parser::rest_hir::semantics::HttpStreamKind::Server)
@@ -315,6 +381,23 @@ fn build_method_model(
         };
 
     Ok(MethodModel {
+        union_wrapper,
+        representations,
+        union_header_out: op
+            .http
+            .response
+            .header
+            .iter()
+            .filter_map(|binding| match &binding.source {
+                xidl_parser::rest_hir::HttpOutputSource::Param { name } => {
+                    Some(super::model::UnionHeaderOutContext {
+                        name: name.clone(),
+                        wire: binding.wire_name.clone(),
+                    })
+                }
+                xidl_parser::rest_hir::HttpOutputSource::ReturnValue => None,
+            })
+            .collect(),
         name: ts_ident(&op.meta.name),
         params: build_client_params(op, module_path, &request_name),
         request_name,

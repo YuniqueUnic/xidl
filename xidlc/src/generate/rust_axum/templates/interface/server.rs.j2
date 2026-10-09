@@ -43,7 +43,7 @@ T: {{ ident }} + Send + Sync + 'static,
         request: {{ method.request_struct }}{% endif %}
         ) -> ::xidl_rust_axum::Result<::xidl_rust_axum::axum::response::Response> {
             let _ = &headers;
-            {% if method.response_content_type and method.response_content_type != "" and not method.is_bidi_stream and not method.is_upgrade %}
+            {% if method.representations | length == 0 and method.response_content_type and method.response_content_type != "" and not method.is_bidi_stream and not method.is_upgrade %}
                 if !xidl_rust_axum::http::accepts_media_type(&headers, "{{ method.response_content_type }}") {
                     return Err(xidl_rust_axum::Error::not_acceptable());
                 }
@@ -382,6 +382,41 @@ T: {{ ident }} + Send + Sync + 'static,
                                 xidl_rust_axum::stream::sse_response(resp_value)
                             {% elif method.is_upgrade %}
                                 resp_value
+                            {% elif method.representations | length > 0 %}
+                                {
+                                    {% if method.response_struct %}let union_value = resp_value.r#return;{% else %}let union_value = resp_value;{% endif %}
+                                    let _ = &union_value;
+                                    match union_value {
+                                        {% for repr in method.representations %}
+                                        {{ method.response_union }}::{{ repr.variant }}(payload) => {
+                                            if !xidl_rust_axum::http::accepts_media_type(&headers, "{{ repr.content_type }}") {
+                                                return Err(xidl_rust_axum::Error::not_acceptable());
+                                            }
+                                            {% if repr.is_byte %}
+                                            ::xidl_rust_axum::axum::response::Response::builder()
+                                            .status(::xidl_rust_axum::axum::http::StatusCode::from_u16({{ method.response_status }}).unwrap())
+                                            .header(
+                                            ::xidl_rust_axum::axum::http::header::CONTENT_TYPE,
+                                            "{{ repr.content_type }}",
+                                            )
+                                            .body(::xidl_rust_axum::axum::body::Body::from(payload))
+                                            .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?
+                                            {% else %}
+                                            let body = xidl_rust_axum::SerializeFactory::new("{{ repr.content_type }}")
+                                            .to_vec(&payload)?;
+                                            ::xidl_rust_axum::axum::response::Response::builder()
+                                            .status(::xidl_rust_axum::axum::http::StatusCode::from_u16({{ method.response_status }}).unwrap())
+                                            .header(
+                                            ::xidl_rust_axum::axum::http::header::CONTENT_TYPE,
+                                            "{{ repr.content_type }}",
+                                            )
+                                            .body(::xidl_rust_axum::axum::body::Body::from(body))
+                                            .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?
+                                            {% endif %}
+                                        }
+                                        {% endfor %}
+                                    }
+                                }
                             {% elif method.response_is_empty %}
                                 {
                                     let _ = resp_value;

@@ -96,9 +96,23 @@ pub(crate) struct MethodContext {
     pub(crate) handshake_param_names: Vec<String>,
     /// Exceptions from `raises(...)`: typed error variants for this operation.
     pub(crate) raises: Vec<RaisesContext>,
+    /// Non-empty when the return type is an `@http` union: content-negotiated
+    /// success representations.
+    pub(crate) representations: Vec<RepresentationContext>,
+    /// The union's Rust type as written in the IDL (empty when not a union).
+    pub(crate) response_union: String,
     /// The operation's error type: the per-operation enum when `raises` is
     /// non-empty, otherwise the runtime [`xidl_rust_axum::Error`].
     pub(crate) error_ty: Option<String>,
+}
+
+/// One representation of an `@http` union response.
+#[derive(Serialize, Clone)]
+pub(crate) struct RepresentationContext {
+    pub(crate) variant: String,
+    pub(crate) content_type: String,
+    pub(crate) ty: String,
+    pub(crate) is_byte: bool,
 }
 
 /// One `raises(...)` entry projected for the rust-axum generator.

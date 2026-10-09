@@ -34,6 +34,14 @@ pub(crate) struct MethodInfo {
     pub(crate) websocket_subprotocol: Option<String>,
     /// `raises(...)` exceptions projected as typed error responses.
     pub(crate) raises: Vec<ExceptionResponseInfo>,
+    /// `@http` union representations for the success response.
+    pub(crate) representations: Vec<RepresentationInfo>,
+}
+
+/// One negotiated success representation of an `@http` union response.
+pub(crate) struct RepresentationInfo {
+    pub(crate) content_type: String,
+    pub(crate) schema: RefOr<Schema>,
 }
 
 /// One declared exception rendered as an OpenAPI response.
@@ -201,6 +209,29 @@ pub(crate) fn render_http_operation(
             .websocket
             .as_ref()
             .and_then(|cfg| cfg.subprotocol.clone()),
+        representations: op
+            .http
+            .response
+            .representations
+            .iter()
+            .map(|repr| {
+                let schema = if repr.is_byte {
+                    RefOr::T(Schema::from(
+                        ObjectBuilder::new().schema_type(Type::String).format(Some(
+                            crate::openapi::schema::SchemaFormat::KnownFormat(
+                                crate::openapi::schema::KnownFormat::Binary,
+                            ),
+                        )),
+                    ))
+                } else {
+                    schema_for_type(&repr.ty)
+                };
+                RepresentationInfo {
+                    content_type: repr.content_type.clone(),
+                    schema,
+                }
+            })
+            .collect(),
         raises: op
             .meta
             .raises

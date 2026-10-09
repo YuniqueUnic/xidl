@@ -234,6 +234,8 @@ pub(crate) fn render_attr_operation_from_http(
         // Attribute-generated operations carry no raises channel.
         raises: Vec::new(),
         error_ty: None,
+        representations: Vec::new(),
+        response_union: String::new(),
     })
 }
 

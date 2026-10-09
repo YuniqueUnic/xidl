@@ -356,6 +356,7 @@ fn build_response_mapping(
     };
 
     HttpResponseMapping {
+        representations: Vec::new(),
         header,
         cookie,
         body: HttpResponseBodyMapping {

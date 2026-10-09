@@ -61,6 +61,21 @@ pub(super) struct SecurityContext {
     pub(super) realm: Option<String>,
 }
 
+#[derive(Clone, Serialize)]
+pub(super) struct UnionHeaderOutContext {
+    pub(super) name: String,
+    pub(super) wire: String,
+}
+
+/// One representation of an `@http` union response (typescript-rest).
+#[derive(Clone, Serialize)]
+pub(super) struct TsRepresentationContext {
+    pub(super) kind: String,
+    pub(super) content_type: String,
+    pub(super) value_ty: TsType,
+    pub(super) is_byte: bool,
+}
+
 /// One `raises(...)` entry projected for the typescript-rest generator.
 #[derive(Clone, Serialize)]
 pub(super) struct TsRaisesContext {
@@ -128,6 +143,10 @@ pub(super) struct ClientMethodContext {
     pub(super) security: Vec<SecurityContext>,
     pub(super) raises: Vec<TsRaisesContext>,
     pub(super) raise_helper: String,
+    pub(super) representations: Vec<TsRepresentationContext>,
+    pub(super) union_wrapper: Option<TsType>,
+    pub(super) union_accept: String,
+    pub(super) union_header_out: Vec<UnionHeaderOutContext>,
 }
 
 #[derive(Serialize)]
@@ -169,6 +188,8 @@ pub(super) struct ServerMethodContext {
     pub(super) stream_item_schema_ref: Option<String>,
     pub(super) security: Vec<SecurityContext>,
     pub(super) raises: Vec<TsRaisesContext>,
+    pub(super) representations: Vec<TsRepresentationContext>,
+    pub(super) union_wrapper: Option<TsType>,
 }
 
 #[derive(Clone)]
@@ -209,6 +230,13 @@ pub(super) struct MethodModel {
     pub(super) request_fields: Vec<ParamDeclContext>,
     pub(super) response_fields: Vec<ParamDeclContext>,
     pub(super) raises: Vec<TsRaisesContext>,
+    /// `@http` union representations; non-empty switches the response flow.
+    pub(super) representations: Vec<TsRepresentationContext>,
+    /// Response wrapper for `@http` unions:
+    /// `{ kind; value; <out params> } | ...`.
+    pub(super) union_wrapper: Option<TsType>,
+    /// Out header bindings folded into the union wrapper result.
+    pub(super) union_header_out: Vec<UnionHeaderOutContext>,
 }
 
 impl MethodModel {
@@ -248,6 +276,15 @@ impl MethodModel {
             stream_item_schema_ref: self.stream_item_schema_ref,
             security: self.security,
             raises: self.raises.clone(),
+            union_header_out: self.union_header_out.clone(),
+            representations: self.representations.clone(),
+            union_wrapper: self.union_wrapper.clone(),
+            union_accept: self
+                .representations
+                .iter()
+                .map(|repr| repr.content_type.clone())
+                .collect::<Vec<_>>()
+                .join(", "),
         }
     }
 
@@ -291,6 +328,8 @@ impl MethodModel {
             stream_item_schema_ref: self.stream_item_schema_ref,
             security: self.security,
             raises: self.raises,
+            representations: self.representations,
+            union_wrapper: self.union_wrapper,
         }
     }
 }
