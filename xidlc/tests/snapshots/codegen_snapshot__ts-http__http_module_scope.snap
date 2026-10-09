@@ -56,18 +56,18 @@ import {
         
             async get_item(id: string): Promise<types.nm.Item> {
                 const parsed = ifaceSchemas.nm.ItemServiceGetItemRequestSchema.parse({ "id": id });
-                let path = "/item/{id}";
-                path = path.replace("{" + "id" + "}", encodePathSegment(id));
+                let xidlPath = "/item/{id}";
+                xidlPath = xidlPath.replace("{" + "id" + "}", encodePathSegment(id));
                 const query = new URLSearchParams();
                 const headers = new Headers(this.defaultHeaders);
                 const cookies: string[] = [];
                 applyCookies(headers, cookies);
-                applyClientAuth(path, query, headers, this.auth, []);
+                applyClientAuth(xidlPath, query, headers, this.auth, []);
                 const queryString = query.toString();
                 if (queryString.length > 0) {
-                    path = `${path}?${queryString}`;
+                    xidlPath = `${xidlPath}?${queryString}`;
                 }
-                const url = joinUrl(this.baseUrl, path);
+                const url = joinUrl(this.baseUrl, xidlPath);
                 headers.set("Accept", "application/json");
             const resp = await this.fetchImpl(url, { method: "GET", headers });
             if (!resp.ok) {
@@ -80,17 +80,17 @@ import {
         
             async put_item(item: types.nm.Item): Promise<void> {
                 const parsed = ifaceSchemas.nm.ItemServicePutItemRequestSchema.parse({ "item": item });
-                let path = "/items";
+                let xidlPath = "/items";
                 const query = new URLSearchParams();
                 const headers = new Headers(this.defaultHeaders);
                 const cookies: string[] = [];
                 applyCookies(headers, cookies);
-                applyClientAuth(path, query, headers, this.auth, []);
+                applyClientAuth(xidlPath, query, headers, this.auth, []);
                 const queryString = query.toString();
                 if (queryString.length > 0) {
-                    path = `${path}?${queryString}`;
+                    xidlPath = `${xidlPath}?${queryString}`;
                 }
-                const url = joinUrl(this.baseUrl, path);
+                const url = joinUrl(this.baseUrl, xidlPath);
                 const body = { "item": parsed["item"] };
             headers.set("Content-Type", "application/json");
             headers.set("Accept", "");
@@ -104,17 +104,17 @@ import {
         }
         
             async get_wrapper(): Promise<types.nm.Wrapper> {
-                let path = "/wrapper";
+                let xidlPath = "/wrapper";
                 const query = new URLSearchParams();
                 const headers = new Headers(this.defaultHeaders);
                 const cookies: string[] = [];
                 applyCookies(headers, cookies);
-                applyClientAuth(path, query, headers, this.auth, []);
+                applyClientAuth(xidlPath, query, headers, this.auth, []);
                 const queryString = query.toString();
                 if (queryString.length > 0) {
-                    path = `${path}?${queryString}`;
+                    xidlPath = `${xidlPath}?${queryString}`;
                 }
-                const url = joinUrl(this.baseUrl, path);
+                const url = joinUrl(this.baseUrl, xidlPath);
                 headers.set("Accept", "application/json");
             const resp = await this.fetchImpl(url, { method: "GET", headers });
             if (!resp.ok) {
@@ -146,17 +146,17 @@ import {
             }
             
                 async get_leaf(): Promise<types.outer.inner.Leaf> {
-                    let path = "/leaf";
+                    let xidlPath = "/leaf";
                     const query = new URLSearchParams();
                     const headers = new Headers(this.defaultHeaders);
                     const cookies: string[] = [];
                     applyCookies(headers, cookies);
-                    applyClientAuth(path, query, headers, this.auth, []);
+                    applyClientAuth(xidlPath, query, headers, this.auth, []);
                     const queryString = query.toString();
                     if (queryString.length > 0) {
-                        path = `${path}?${queryString}`;
+                        xidlPath = `${xidlPath}?${queryString}`;
                     }
-                    const url = joinUrl(this.baseUrl, path);
+                    const url = joinUrl(this.baseUrl, xidlPath);
                     headers.set("Accept", "application/json");
                 const resp = await this.fetchImpl(url, { method: "GET", headers });
                 if (!resp.ok) {

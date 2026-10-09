@@ -56,8 +56,8 @@ import {
         
             async get_user(id: number, req_id: string, flags: Array<string>, age: number, session_id: string, prefs: Array<string>): Promise<types.test.User> {
                 const parsed = ifaceSchemas.test.HeaderServiceGetUserRequestSchema.parse({ "id": id, "req_id": req_id, "flags": flags, "age": age, "session_id": session_id, "prefs": prefs });
-                let path = "/v1/headers/{id}";
-                path = path.replace("{" + "id" + "}", encodePathSegment(id));
+                let xidlPath = "/v1/headers/{id}";
+                xidlPath = xidlPath.replace("{" + "id" + "}", encodePathSegment(id));
                 const query = new URLSearchParams();
                 const headers = new Headers(this.defaultHeaders);
                 appendHeader(headers, "X-Req-Id", req_id, false, false);
@@ -67,12 +67,12 @@ import {
                 appendCookie(cookies, "sid", session_id, false, false);
                 appendCookie(cookies, "pref", prefs, false, true);
                 applyCookies(headers, cookies);
-                applyClientAuth(path, query, headers, this.auth, []);
+                applyClientAuth(xidlPath, query, headers, this.auth, []);
                 const queryString = query.toString();
                 if (queryString.length > 0) {
-                    path = `${path}?${queryString}`;
+                    xidlPath = `${xidlPath}?${queryString}`;
                 }
-                const url = joinUrl(this.baseUrl, path);
+                const url = joinUrl(this.baseUrl, xidlPath);
                 headers.set("Accept", "application/json");
             const resp = await this.fetchImpl(url, { method: "GET", headers });
             if (!resp.ok) {
@@ -85,19 +85,19 @@ import {
         
             async create_user(token: string, session_id: string, name: string): Promise<void> {
                 const parsed = ifaceSchemas.test.HeaderServiceCreateUserRequestSchema.parse({ "token": token, "session_id": session_id, "name": name });
-                let path = "/v1/headers";
+                let xidlPath = "/v1/headers";
                 const query = new URLSearchParams();
                 const headers = new Headers(this.defaultHeaders);
                 appendHeader(headers, "X-Token", token, false, false);
                 const cookies: string[] = [];
                 appendCookie(cookies, "sid", session_id, false, false);
                 applyCookies(headers, cookies);
-                applyClientAuth(path, query, headers, this.auth, []);
+                applyClientAuth(xidlPath, query, headers, this.auth, []);
                 const queryString = query.toString();
                 if (queryString.length > 0) {
-                    path = `${path}?${queryString}`;
+                    xidlPath = `${xidlPath}?${queryString}`;
                 }
-                const url = joinUrl(this.baseUrl, path);
+                const url = joinUrl(this.baseUrl, xidlPath);
                 const body = parsed;
             headers.set("Content-Type", "text/plain");
             headers.set("Accept", "");

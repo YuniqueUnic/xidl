@@ -56,20 +56,20 @@ export class HttpQueryTemplateServiceClient {
     
         async get_user(id: number, lang: string, region: string): Promise<string> {
             const parsed = ifaceSchemas.HttpQueryTemplateServiceGetUserRequestSchema.parse({ "id": id, "lang": lang, "region": region });
-            let path = "/users/{id}";
-            path = path.replace("{" + "id" + "}", encodePathSegment(id));
+            let xidlPath = "/users/{id}";
+            xidlPath = xidlPath.replace("{" + "id" + "}", encodePathSegment(id));
             const query = new URLSearchParams();
             appendParam(query, "lang", lang, false, false);
             appendParam(query, "region", region, false, false);
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
         if (!resp.ok) {
@@ -82,18 +82,18 @@ export class HttpQueryTemplateServiceClient {
     
         async search(keyword: string, payload: string): Promise<string> {
             const parsed = ifaceSchemas.HttpQueryTemplateServiceSearchRequestSchema.parse({ "keyword": keyword, "payload": payload });
-            let path = "/search";
+            let xidlPath = "/search";
             const query = new URLSearchParams();
             appendParam(query, "keyword", keyword, false, false);
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             const body = parsed;
         headers.set("Content-Type", "text/plain");
         headers.set("Accept", "text/plain");

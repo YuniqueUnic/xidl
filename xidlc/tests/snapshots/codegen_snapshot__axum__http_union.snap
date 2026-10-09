@@ -25,11 +25,11 @@ pub struct NotFound {
 pub trait Files {
     async fn get_meta(
         &self,
-        key: String,
+        path: String,
     ) -> ::std::result::Result<FileResponse, FilesGetMetaError>;
     async fn get_file(
         &self,
-        key: String,
+        path: String,
     ) -> ::std::result::Result<FilesGetFileResponse, FilesGetFileError>;
 }
 /// Typed error channel for `get_meta`: one variant per
@@ -135,16 +135,16 @@ pub(super) mod __xidl_out_Files {
 #[derive(::serde::Serialize, ::core::default::Default)]
 struct FilesGetMetaRequestOutQuery {
     #[serde(default)]
-    key: String,
+    path: String,
 }
 #[derive(::serde::Deserialize, ::core::default::Default)]
 struct FilesGetMetaRequestInQuery {
     #[serde(default)]
-    key: String,
+    path: String,
 }
 #[derive(::serde::Deserialize)]
 struct FilesGetMetaRequest {
-    key: String,
+    path: String,
 }
 #[allow(clippy::manual_async_fn, unused_mut)]
 impl<S> ::xidl_rust_axum::axum::extract::FromRequest<S> for FilesGetMetaRequest
@@ -167,26 +167,26 @@ where
             >>::from_request_parts(&mut parts, state)
                 .await
                 .map_err(|err| ::xidl_rust_axum::Error::new(400, err.to_string()))?;
-            let FilesGetMetaRequestInQuery { key } = xidl_query;
+            let FilesGetMetaRequestInQuery { path } = xidl_query;
             let xidl_headers = &parts.headers;
             let _ = xidl_headers;
-            Ok(Self { key })
+            Ok(Self { path })
         }
     }
 }
 #[derive(::serde::Serialize, ::core::default::Default)]
 struct FilesGetFileRequestOutQuery {
     #[serde(default)]
-    key: String,
+    path: String,
 }
 #[derive(::serde::Deserialize, ::core::default::Default)]
 struct FilesGetFileRequestInQuery {
     #[serde(default)]
-    key: String,
+    path: String,
 }
 #[derive(::serde::Deserialize)]
 struct FilesGetFileRequest {
-    key: String,
+    path: String,
 }
 #[allow(clippy::manual_async_fn, unused_mut)]
 impl<S> ::xidl_rust_axum::axum::extract::FromRequest<S> for FilesGetFileRequest
@@ -209,10 +209,10 @@ where
             >>::from_request_parts(&mut parts, state)
                 .await
                 .map_err(|err| ::xidl_rust_axum::Error::new(400, err.to_string()))?;
-            let FilesGetFileRequestInQuery { key } = xidl_query;
+            let FilesGetFileRequestInQuery { path } = xidl_query;
             let xidl_headers = &parts.headers;
             let _ = xidl_headers;
-            Ok(Self { key })
+            Ok(Self { path })
         }
     }
 }
@@ -287,9 +287,9 @@ where
         if !xidl_rust_axum::http::accepts_media_type(&headers, "application/json") {
             return Err(xidl_rust_axum::Error::not_acceptable());
         }
-        let FilesGetMetaRequest { key } = request;
-        let key: String = key;
-        let mut resp = match svc.get_meta(key).await {
+        let FilesGetMetaRequest { path } = request;
+        let path: String = path;
+        let mut resp = match svc.get_meta(path).await {
             Ok(resp_value) => {
                 let mut resp = {
                     let body_value: FileResponse = resp_value;
@@ -340,9 +340,9 @@ where
         if !xidl_rust_axum::http::accepts_media_type(&headers, "application/json") {
             return Err(xidl_rust_axum::Error::not_acceptable());
         }
-        let FilesGetFileRequest { key } = request;
-        let key: String = key;
-        let mut resp = match svc.get_file(key).await {
+        let FilesGetFileRequest { path } = request;
+        let path: String = path;
+        let mut resp = match svc.get_file(path).await {
             Ok(resp_value) => {
                 let etag_header_value: String = {
                     let value = &resp_value.etag;
@@ -418,7 +418,7 @@ impl FilesClient {
     #[allow(clippy::useless_conversion, unused_mut, unreachable_code, unused_variables)]
     pub async fn get_meta(
         &self,
-        key: String,
+        path: String,
     ) -> Result<FileResponse, FilesGetMetaError> {
         let path = "/meta".to_string();
         let mut req = self
@@ -435,7 +435,9 @@ impl FilesClient {
                     )
                     .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?,
             );
-        let query = FilesGetMetaRequestOutQuery { key };
+        let query = FilesGetMetaRequestOutQuery {
+            path,
+        };
         let query = xidl_rust_axum::serde_urlencoded::to_string(&query)
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         if !query.is_empty() {
@@ -480,7 +482,7 @@ impl FilesClient {
     #[allow(clippy::useless_conversion, unused_mut, unreachable_code, unused_variables)]
     pub async fn get_file(
         &self,
-        key: String,
+        path: String,
     ) -> Result<FilesGetFileResponse, FilesGetFileError> {
         let path = "/file".to_string();
         let mut req = self
@@ -497,7 +499,9 @@ impl FilesClient {
                     )
                     .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?,
             );
-        let query = FilesGetFileRequestOutQuery { key };
+        let query = FilesGetFileRequestOutQuery {
+            path,
+        };
         let query = xidl_rust_axum::serde_urlencoded::to_string(&query)
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         if !query.is_empty() {

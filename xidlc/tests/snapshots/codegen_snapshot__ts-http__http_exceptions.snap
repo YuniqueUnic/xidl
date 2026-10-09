@@ -58,19 +58,19 @@ export class FilesClient {
     
         async get_file(id: string, if_none_match: string | undefined): Promise<types.FileMeta> {
             const parsed = ifaceSchemas.FilesGetFileRequestSchema.parse({ "id": id, "if_none_match": if_none_match });
-            let path = "/files/{id}";
-            path = path.replace("{" + "id" + "}", encodePathSegment(id));
+            let xidlPath = "/files/{id}";
+            xidlPath = xidlPath.replace("{" + "id" + "}", encodePathSegment(id));
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             appendHeader(headers, "If-None-Match", if_none_match, true, false);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "application/json");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
         if (!resp.ok) {
@@ -83,19 +83,19 @@ export class FilesClient {
     
         async delete_file(id: string, if_match: string): Promise<void> {
             const parsed = ifaceSchemas.FilesDeleteFileRequestSchema.parse({ "id": id, "if_match": if_match });
-            let path = "/files/{id}";
-            path = path.replace("{" + "id" + "}", encodePathSegment(id));
+            let xidlPath = "/files/{id}";
+            xidlPath = xidlPath.replace("{" + "id" + "}", encodePathSegment(id));
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             appendHeader(headers, "If-Match", if_match, false, false);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "");
         const resp = await this.fetchImpl(url, { method: "DELETE", headers });
         if (!resp.ok) {

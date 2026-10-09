@@ -29,12 +29,12 @@ union FileResponse switch (ContentType) {
 interface Files {
     // Plain union return: no extra out params.
     @get(path = "/meta")
-    FileResponse get_meta(@query string key) raises(NotFound);
+    FileResponse get_meta(@query string path) raises(NotFound);
 
     // Union + @header out param: ETag rides every representation.
     @get(path = "/file")
     FileResponse get_file(
-        @query string key,
+        @query string path,
         @header @rename("ETag") out string etag
     ) raises(NotFound);
 };

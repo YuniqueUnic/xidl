@@ -55,17 +55,17 @@ export class HttpAttributeServiceClient {
     }
     
         async get_attribute_version(): Promise<string> {
-            let path = "/attribute/version";
+            let xidlPath = "/attribute/version";
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
         if (!resp.ok) {
@@ -77,17 +77,17 @@ export class HttpAttributeServiceClient {
     }
     
         async get_attribute_name(): Promise<string> {
-            let path = "/attribute/name";
+            let xidlPath = "/attribute/name";
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
         if (!resp.ok) {
@@ -100,17 +100,17 @@ export class HttpAttributeServiceClient {
     
         async set_attribute_name(name: string): Promise<void> {
             const parsed = ifaceSchemas.HttpAttributeServiceSetAttributeNameRequestSchema.parse({ "name": name });
-            let path = "/attribute/name";
+            let xidlPath = "/attribute/name";
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             const body = parsed;
         headers.set("Content-Type", "text/plain");
         headers.set("Accept", "");

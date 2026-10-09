@@ -56,18 +56,18 @@ export class HttpSecurityServiceClient {
     
         async get_user(id: number): Promise<string> {
             const parsed = ifaceSchemas.HttpSecurityServiceGetUserRequestSchema.parse({ "id": id });
-            let path = "/users/{id}";
-            path = path.replace("{" + "id" + "}", encodePathSegment(id));
+            let xidlPath = "/users/{id}";
+            xidlPath = xidlPath.replace("{" + "id" + "}", encodePathSegment(id));
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, [{ kind: "basic" }, { kind: "api_key", location: "header", name: "X-API-Key" }]);
+            applyClientAuth(xidlPath, query, headers, this.auth, [{ kind: "basic" }, { kind: "api_key", location: "header", name: "X-API-Key" }]);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
         if (!resp.ok) {
@@ -79,17 +79,17 @@ export class HttpSecurityServiceClient {
     }
     
         async whoami(): Promise<string> {
-            let path = "/whoami";
+            let xidlPath = "/whoami";
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, [{ kind: "bearer" }]);
+            applyClientAuth(xidlPath, query, headers, this.auth, [{ kind: "bearer" }]);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
         if (!resp.ok) {
@@ -102,17 +102,17 @@ export class HttpSecurityServiceClient {
     
         async search_user(keyword: string): Promise<string> {
             const parsed = ifaceSchemas.HttpSecurityServiceSearchUserRequestSchema.parse({ "keyword": keyword });
-            let path = "/users/search";
+            let xidlPath = "/users/search";
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             const body = parsed;
         headers.set("Content-Type", "text/plain");
         headers.set("Accept", "text/plain");
@@ -126,17 +126,17 @@ export class HttpSecurityServiceClient {
     }
     
         async health(): Promise<string> {
-            let path = "/health";
+            let xidlPath = "/health";
             const query = new URLSearchParams();
             const headers = new Headers(this.defaultHeaders);
             const cookies: string[] = [];
             applyCookies(headers, cookies);
-            applyClientAuth(path, query, headers, this.auth, []);
+            applyClientAuth(xidlPath, query, headers, this.auth, []);
             const queryString = query.toString();
             if (queryString.length > 0) {
-                path = `${path}?${queryString}`;
+                xidlPath = `${xidlPath}?${queryString}`;
             }
-            const url = joinUrl(this.baseUrl, path);
+            const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
         if (!resp.ok) {

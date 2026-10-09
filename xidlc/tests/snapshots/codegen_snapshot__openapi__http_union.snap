@@ -110,7 +110,7 @@ openapi_http_union.json
         "parameters": [
           {
             "in": "query",
-            "name": "key",
+            "name": "path",
             "required": true,
             "schema": {
               "type": "string"
@@ -177,7 +177,7 @@ openapi_http_union.json
         "parameters": [
           {
             "in": "query",
-            "name": "key",
+            "name": "path",
             "required": true,
             "schema": {
               "type": "string"
