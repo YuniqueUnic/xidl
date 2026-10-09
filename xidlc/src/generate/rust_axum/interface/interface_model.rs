@@ -99,6 +99,9 @@ pub(crate) struct MethodContext {
     /// Non-empty when the return type is an `@http` union: content-negotiated
     /// success representations.
     pub(crate) representations: Vec<RepresentationContext>,
+    /// Comma-joined media types of every representation, sent as `Accept` so
+    /// the server may answer with any union case (None when not a union).
+    pub(crate) union_accept: Option<String>,
     /// The union's Rust type as written in the IDL (empty when not a union).
     pub(crate) response_union: String,
     /// The operation's error type: the per-operation enum when `raises` is

@@ -235,6 +235,7 @@ pub(crate) fn render_attr_operation_from_http(
         raises: Vec::new(),
         error_ty: None,
         representations: Vec::new(),
+        union_accept: None,
         response_union: String::new(),
     })
 }

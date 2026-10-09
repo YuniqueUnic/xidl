@@ -19,6 +19,12 @@ exception NotFound {
     string msg;
 };
 
+@http
+union FileResponse switch (ContentType) {
+    case Json: FileMeta meta;
+    case OctetStream: sequence<octet> raw;
+};
+
 @no_security
 interface Files {
     // Plain union return: no extra out params.

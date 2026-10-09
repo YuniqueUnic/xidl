@@ -372,6 +372,17 @@ pub(crate) fn render_op_from_http(
         response_status: http_op.http.response.status.clone(),
         raises,
         error_ty,
+        union_accept: if representations.is_empty() {
+            None
+        } else {
+            Some(
+                representations
+                    .iter()
+                    .map(|repr| repr.content_type.clone())
+                    .collect::<Vec<_>>()
+                    .join(", "),
+            )
+        },
         representations,
         response_union,
     })

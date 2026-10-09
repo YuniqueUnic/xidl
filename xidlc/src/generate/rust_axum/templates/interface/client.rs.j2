@@ -111,7 +111,9 @@ impl {{ ident }}Client {
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
             req.headers_mut().insert(
             xidl_rust_axum::reqwest::header::ACCEPT,
-            xidl_rust_axum::reqwest::header::HeaderValue::from_str("{{ method.response_content_type }}")
+            xidl_rust_axum::reqwest::header::HeaderValue::from_str(
+                {% if method.union_accept %}"{{ method.union_accept }}"{% else %}"{{ method.response_content_type }}"{% endif %}
+            )
             .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?,
             );
             {% if method.is_upgrade %}
