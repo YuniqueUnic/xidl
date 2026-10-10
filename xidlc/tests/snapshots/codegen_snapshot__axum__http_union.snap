@@ -92,7 +92,6 @@ impl From<xidl_rust_axum::Error> for FilesGetMetaError {
         Self::Framework(err)
     }
 }
-#[allow(unused_mut)]
 impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetMetaError {
     fn into_response(self) -> ::xidl_rust_axum::axum::response::Response {
         match self {
@@ -100,20 +99,6 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetMetaError {
                 ::xidl_rust_axum::axum::response::IntoResponse::into_response(err)
             }
             Self::NotFound(err) => {
-                let headers = (|| -> xidl_rust_axum::Result<
-                    ::xidl_rust_axum::axum::http::HeaderMap,
-                > {
-                    let headers = ::xidl_rust_axum::axum::http::HeaderMap::new();
-                    Ok(headers)
-                })();
-                let headers = match headers {
-                    Ok(headers) => headers,
-                    Err(err) => {
-                        return ::xidl_rust_axum::axum::response::IntoResponse::into_response(
-                            err,
-                        );
-                    }
-                };
                 let body = match xidl_rust_axum::serde_json::to_vec(&err) {
                     Ok(body) => body,
                     Err(err) => {
@@ -122,18 +107,20 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetMetaError {
                         );
                     }
                 };
-                let mut response = ::xidl_rust_axum::axum::http::Response::builder()
-                    .status(
-                        ::xidl_rust_axum::axum::http::StatusCode::from_u16(404u16)
-                            .unwrap(),
+                let body = ::xidl_rust_axum::axum::body::Body::from(body);
+                let mut response = ::xidl_rust_axum::axum::response::Response::new(body);
+                *response.status_mut() = ::xidl_rust_axum::axum::http::StatusCode::from_u16(
+                        404u16,
                     )
-                    .header(
+                    .unwrap();
+                response
+                    .headers_mut()
+                    .insert(
                         ::xidl_rust_axum::axum::http::header::CONTENT_TYPE,
-                        "application/json",
-                    )
-                    .body(::xidl_rust_axum::axum::body::Body::from(body))
-                    .expect("error response should build");
-                response.headers_mut().extend(headers);
+                        ::xidl_rust_axum::axum::http::HeaderValue::from_static(
+                            "application/json",
+                        ),
+                    );
                 response
             }
         }
@@ -167,7 +154,6 @@ impl From<xidl_rust_axum::Error> for FilesGetFileError {
         Self::Framework(err)
     }
 }
-#[allow(unused_mut)]
 impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetFileError {
     fn into_response(self) -> ::xidl_rust_axum::axum::response::Response {
         match self {
@@ -175,20 +161,6 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetFileError {
                 ::xidl_rust_axum::axum::response::IntoResponse::into_response(err)
             }
             Self::NotFound(err) => {
-                let headers = (|| -> xidl_rust_axum::Result<
-                    ::xidl_rust_axum::axum::http::HeaderMap,
-                > {
-                    let headers = ::xidl_rust_axum::axum::http::HeaderMap::new();
-                    Ok(headers)
-                })();
-                let headers = match headers {
-                    Ok(headers) => headers,
-                    Err(err) => {
-                        return ::xidl_rust_axum::axum::response::IntoResponse::into_response(
-                            err,
-                        );
-                    }
-                };
                 let body = match xidl_rust_axum::serde_json::to_vec(&err) {
                     Ok(body) => body,
                     Err(err) => {
@@ -197,18 +169,20 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetFileError {
                         );
                     }
                 };
-                let mut response = ::xidl_rust_axum::axum::http::Response::builder()
-                    .status(
-                        ::xidl_rust_axum::axum::http::StatusCode::from_u16(404u16)
-                            .unwrap(),
+                let body = ::xidl_rust_axum::axum::body::Body::from(body);
+                let mut response = ::xidl_rust_axum::axum::response::Response::new(body);
+                *response.status_mut() = ::xidl_rust_axum::axum::http::StatusCode::from_u16(
+                        404u16,
                     )
-                    .header(
+                    .unwrap();
+                response
+                    .headers_mut()
+                    .insert(
                         ::xidl_rust_axum::axum::http::header::CONTENT_TYPE,
-                        "application/json",
-                    )
-                    .body(::xidl_rust_axum::axum::body::Body::from(body))
-                    .expect("error response should build");
-                response.headers_mut().extend(headers);
+                        ::xidl_rust_axum::axum::http::HeaderValue::from_static(
+                            "application/json",
+                        ),
+                    );
                 response
             }
         }

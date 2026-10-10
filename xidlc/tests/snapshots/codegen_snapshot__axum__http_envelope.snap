@@ -112,7 +112,6 @@ impl From<xidl_rust_axum::Error> for EnvelopeApiGetFileError {
         Self::Framework(err)
     }
 }
-#[allow(unused_mut)]
 impl ::xidl_rust_axum::axum::response::IntoResponse for EnvelopeApiGetFileError {
     fn into_response(self) -> ::xidl_rust_axum::axum::response::Response {
         match self {
@@ -120,20 +119,6 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for EnvelopeApiGetFileError 
                 ::xidl_rust_axum::axum::response::IntoResponse::into_response(err)
             }
             Self::NotFound(err) => {
-                let headers = (|| -> xidl_rust_axum::Result<
-                    ::xidl_rust_axum::axum::http::HeaderMap,
-                > {
-                    let headers = ::xidl_rust_axum::axum::http::HeaderMap::new();
-                    Ok(headers)
-                })();
-                let headers = match headers {
-                    Ok(headers) => headers,
-                    Err(err) => {
-                        return ::xidl_rust_axum::axum::response::IntoResponse::into_response(
-                            err,
-                        );
-                    }
-                };
                 let body = match xidl_rust_axum::serde_json::to_vec(&err) {
                     Ok(body) => body,
                     Err(err) => {
@@ -142,18 +127,20 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for EnvelopeApiGetFileError 
                         );
                     }
                 };
-                let mut response = ::xidl_rust_axum::axum::http::Response::builder()
-                    .status(
-                        ::xidl_rust_axum::axum::http::StatusCode::from_u16(404u16)
-                            .unwrap(),
+                let body = ::xidl_rust_axum::axum::body::Body::from(body);
+                let mut response = ::xidl_rust_axum::axum::response::Response::new(body);
+                *response.status_mut() = ::xidl_rust_axum::axum::http::StatusCode::from_u16(
+                        404u16,
                     )
-                    .header(
+                    .unwrap();
+                response
+                    .headers_mut()
+                    .insert(
                         ::xidl_rust_axum::axum::http::header::CONTENT_TYPE,
-                        "application/json",
-                    )
-                    .body(::xidl_rust_axum::axum::body::Body::from(body))
-                    .expect("error response should build");
-                response.headers_mut().extend(headers);
+                        ::xidl_rust_axum::axum::http::HeaderValue::from_static(
+                            "application/json",
+                        ),
+                    );
                 response
             }
         }
@@ -187,7 +174,6 @@ impl From<xidl_rust_axum::Error> for EnvelopeApiGetFreshError {
         Self::Framework(err)
     }
 }
-#[allow(unused_mut)]
 impl ::xidl_rust_axum::axum::response::IntoResponse for EnvelopeApiGetFreshError {
     fn into_response(self) -> ::xidl_rust_axum::axum::response::Response {
         match self {
@@ -221,13 +207,12 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for EnvelopeApiGetFreshError
                         );
                     }
                 };
-                let mut response = ::xidl_rust_axum::axum::http::Response::builder()
-                    .status(
-                        ::xidl_rust_axum::axum::http::StatusCode::from_u16(304u16)
-                            .unwrap(),
+                let body = ::xidl_rust_axum::axum::body::Body::empty();
+                let mut response = ::xidl_rust_axum::axum::response::Response::new(body);
+                *response.status_mut() = ::xidl_rust_axum::axum::http::StatusCode::from_u16(
+                        304u16,
                     )
-                    .body(::xidl_rust_axum::axum::body::Body::empty())
-                    .expect("error response should build");
+                    .unwrap();
                 response.headers_mut().extend(headers);
                 response
             }
@@ -262,7 +247,6 @@ impl From<xidl_rust_axum::Error> for EnvelopeApiDeleteFileError {
         Self::Framework(err)
     }
 }
-#[allow(unused_mut)]
 impl ::xidl_rust_axum::axum::response::IntoResponse for EnvelopeApiDeleteFileError {
     fn into_response(self) -> ::xidl_rust_axum::axum::response::Response {
         match self {
@@ -304,17 +288,20 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for EnvelopeApiDeleteFileErr
                         );
                     }
                 };
-                let mut response = ::xidl_rust_axum::axum::http::Response::builder()
-                    .status(
-                        ::xidl_rust_axum::axum::http::StatusCode::from_u16(412u16)
-                            .unwrap(),
+                let body = ::xidl_rust_axum::axum::body::Body::from(body);
+                let mut response = ::xidl_rust_axum::axum::response::Response::new(body);
+                *response.status_mut() = ::xidl_rust_axum::axum::http::StatusCode::from_u16(
+                        412u16,
                     )
-                    .header(
+                    .unwrap();
+                response
+                    .headers_mut()
+                    .insert(
                         ::xidl_rust_axum::axum::http::header::CONTENT_TYPE,
-                        "application/json",
-                    )
-                    .body(::xidl_rust_axum::axum::body::Body::from(body))
-                    .expect("error response should build");
+                        ::xidl_rust_axum::axum::http::HeaderValue::from_static(
+                            "application/json",
+                        ),
+                    );
                 response.headers_mut().extend(headers);
                 response
             }
