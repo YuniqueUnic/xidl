@@ -37,8 +37,18 @@ export function encodeOperationResponse<TService>(
     );
     if (representation) {
       const headers = new Headers();
-      writeBindings(headers, toRecord(wrapper), operation.response.headers, false);
-      writeBindings(headers, toRecord(wrapper), operation.response.cookies, true);
+      writeBindings(
+        headers,
+        toRecord(wrapper),
+        operation.response.headers,
+        false,
+      );
+      writeBindings(
+        headers,
+        toRecord(wrapper),
+        operation.response.cookies,
+        true,
+      );
       headers.set('Content-Type', representation.contentType);
       const value = wrapper.value;
       const body =

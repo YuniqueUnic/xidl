@@ -60,7 +60,10 @@ export async function decodeOperationRequest<TService>(
   }
 
   if (operation.request.body.kind === 'value') {
-    if (normalizeMime(operation.request.body.contentType) === 'application/octet-stream') {
+    if (
+      normalizeMime(operation.request.body.contentType) ===
+      'application/octet-stream'
+    ) {
       // Raw byte payload: the declared Content-Type is the payload's own
       // media type and is not constrained; the bytes are the value.
       const bytes = new Uint8Array(await request.arrayBuffer());
