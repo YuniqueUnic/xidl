@@ -231,11 +231,13 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpScopeMatrixServiceOverrideConsumesOnlyResponseOutBody {
+    #[serde(flatten)]
     pub r#return: String,
     pub normalized_name: String,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpScopeMatrixServiceOverrideConsumesOnlyResponseInBody {
+    #[serde(flatten)]
     pub r#return: String,
     pub normalized_name: String,
 }
@@ -302,11 +304,13 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpScopeMatrixServiceOverrideProducesOnlyResponseOutBody {
+    #[serde(flatten)]
     pub r#return: __xidl_out_HttpScopeMatrixService::MatrixBody,
     pub revision: u32,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpScopeMatrixServiceOverrideProducesOnlyResponseInBody {
+    #[serde(flatten)]
     pub r#return: __xidl_in_HttpScopeMatrixService::MatrixBody,
     pub revision: u32,
 }
@@ -392,11 +396,13 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpScopeMatrixServiceOverrideBothMediaResponseOutBody {
+    #[serde(flatten)]
     pub r#return: __xidl_out_HttpScopeMatrixService::MatrixBody,
     pub normalized_name: String,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpScopeMatrixServiceOverrideBothMediaResponseInBody {
+    #[serde(flatten)]
     pub r#return: __xidl_in_HttpScopeMatrixService::MatrixBody,
     pub normalized_name: String,
 }

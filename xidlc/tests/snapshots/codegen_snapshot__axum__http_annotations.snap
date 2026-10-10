@@ -371,11 +371,13 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpAnnoServiceAddResponseOutBody {
+    #[serde(flatten)]
     pub r#return: i32,
     pub sum: i32,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpAnnoServiceAddResponseInBody {
+    #[serde(flatten)]
     pub r#return: i32,
     pub sum: i32,
 }
@@ -446,11 +448,13 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpAnnoServiceBumpResponseOutBody {
+    #[serde(flatten)]
     pub r#return: i32,
     pub value: i32,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpAnnoServiceBumpResponseInBody {
+    #[serde(flatten)]
     pub r#return: i32,
     pub value: i32,
 }

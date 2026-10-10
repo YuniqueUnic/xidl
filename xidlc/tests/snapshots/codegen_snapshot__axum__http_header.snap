@@ -70,6 +70,7 @@ pub mod test {
         use super::*;
         #[derive(::serde::Serialize, ::serde::Deserialize)]
         pub enum test_Status {
+            #[serde(rename = "ok")]
             OK,
             FAILED,
         }
@@ -129,6 +130,7 @@ pub mod test {
         use super::*;
         #[derive(::serde::Serialize, ::serde::Deserialize)]
         pub enum test_Status {
+            #[serde(rename = "ok")]
             OK,
             FAILED,
         }

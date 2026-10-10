@@ -290,10 +290,12 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct FilesGetFileResponseOutBody {
+    #[serde(flatten)]
     pub r#return: FileResponse,
 }
 #[derive(::serde::Deserialize)]
 pub struct FilesGetFileResponseInBody {
+    #[serde(flatten)]
     pub r#return: FileResponse,
 }
 pub struct FilesGetFileResponse {

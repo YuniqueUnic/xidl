@@ -48,7 +48,13 @@ pub struct TransportItemContext {
     pub transport_ident: String,
     pub public_path: String,
     pub fields: Vec<TransportFieldContext>,
-    pub variants: Vec<String>,
+    pub variants: Vec<TransportVariantContext>,
+}
+
+#[derive(Serialize)]
+pub struct TransportVariantContext {
+    pub ident: String,
+    pub serde_rename: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -266,7 +272,10 @@ fn render_enum(
         variants: def
             .member
             .iter()
-            .map(|item| rust_ident(&item.ident))
+            .map(|item| TransportVariantContext {
+                ident: rust_ident(&item.ident),
+                serde_rename: serde_rename_from_annotations(&item.annotations),
+            })
             .collect(),
     }
 }
