@@ -1,3 +1,4 @@
+use super::interface_types::{axum_type, render_scoped_name};
 use crate::error::{IdlcError, IdlcResult};
 use crate::generate::rust::util::{rust_ident, rust_passthrough_attrs_from_annotations};
 use crate::generate::rust_axum::interface::{
@@ -13,6 +14,7 @@ use crate::generate::rust_axum::interface::{
     },
 };
 use crate::generate::rust_axum::transport::{TransportDirection, TransportTracker};
+use convert_case::Casing;
 use xidl_parser::hir;
 use xidl_parser::rest_hir::{
     HttpOperation, HttpRequestBodyShape, HttpResponseBodyShape, HttpStreamPayloadCodec,

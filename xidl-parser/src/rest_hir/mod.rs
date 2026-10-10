@@ -8,6 +8,7 @@ mod route;
 pub mod semantics;
 #[cfg(test)]
 mod tests;
+mod unions;
 mod validate;
 
 use serde::{Deserialize, Serialize};

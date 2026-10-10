@@ -1,0 +1,69 @@
+use super::super::model::TsRepresentationContext;
+use crate::generate::typescript::definition::TypeRefTarget;
+use crate::generate::typescript::definition::contexts::{FieldTypeContext, TsType};
+use crate::generate::typescript::definition::type_expr::ts_type_for_type_spec;
+use xidl_parser::rest_hir::HttpOperation;
+
+impl TsRepresentationContext {
+    pub(super) fn for_operation(op: &HttpOperation, module_path: &[String]) -> Vec<Self> {
+        op.http
+            .response
+            .representations
+            .iter()
+            .map(|repr| TsRepresentationContext {
+                kind: repr.case.clone(),
+                content_type: repr.content_type.clone(),
+                value_ty: ts_type_for_type_spec(&repr.ty, module_path, TypeRefTarget::Client),
+                is_byte: repr.is_byte,
+            })
+            .collect()
+    }
+    pub(super) fn response_type(op: &HttpOperation, representations: &[Self]) -> Option<TsType> {
+        (!representations.is_empty()).then(|| {
+            let header_out_fields: Vec<FieldTypeContext> = op
+                .http
+                .response
+                .header
+                .iter()
+                .filter_map(|binding| match &binding.source {
+                    xidl_parser::rest_hir::HttpOutputSource::Param { name } => {
+                        Some(FieldTypeContext {
+                            prop: name.clone(),
+                            ty: TsType::Primitive("string".to_string()),
+                            optional: false,
+                            doc: Vec::new(),
+                        })
+                    }
+                    xidl_parser::rest_hir::HttpOutputSource::ReturnValue => None,
+                })
+                .collect();
+            TsType::Union(
+                representations
+                    .iter()
+                    .map(|repr| {
+                        let mut fields = vec![
+                            FieldTypeContext {
+                                prop: "kind".to_string(),
+                                ty: TsType::Primitive(format!("\"{}\"", repr.kind)),
+                                optional: false,
+                                doc: Vec::new(),
+                            },
+                            FieldTypeContext {
+                                prop: "value".to_string(),
+                                ty: if repr.is_byte {
+                                    TsType::Primitive("Uint8Array".to_string())
+                                } else {
+                                    repr.value_ty.clone()
+                                },
+                                optional: false,
+                                doc: Vec::new(),
+                            },
+                        ];
+                        fields.extend(header_out_fields.iter().cloned());
+                        TsType::InlineStruct(fields)
+                    })
+                    .collect(),
+            )
+        })
+    }
+}
