@@ -13,6 +13,6 @@ pub enum {{ ident }} {
         {%- for line in case.doc %}
             /// {{ line }}
         {%- endfor %}
-    {{ case.case }}({{ case.ty }}),
+        {{ case.case }}({{ case.ty }}),
     {%- endfor %}
 }

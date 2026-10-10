@@ -206,9 +206,9 @@ export class HttpAnnoServiceClient {
             
         }
         const responseBody = await decodeOptionalResponseBody(resp, "application/json", this.codecs, ifaceSchemas.HttpAnnoServiceAddResponseSchema);
-        const responsePayload = buildResponsePayload(responseBody, resp, "object", [], []);
-        return deserialize(responsePayload, ifaceSchemas.HttpAnnoServiceAddResponseSchema) as ifaceTypes.HttpAnnoServiceAddResponse;
-        
+            const responsePayload = buildResponsePayload(responseBody, resp, "object", [], []);
+            return deserialize(responsePayload, ifaceSchemas.HttpAnnoServiceAddResponseSchema) as ifaceTypes.HttpAnnoServiceAddResponse;
+            
     }
     
         async bump(value: number): Promise<ifaceTypes.HttpAnnoServiceBumpResponse> {
@@ -234,9 +234,9 @@ export class HttpAnnoServiceClient {
             
         }
         const responseBody = await decodeOptionalResponseBody(resp, "application/json", this.codecs, ifaceSchemas.HttpAnnoServiceBumpResponseSchema);
-        const responsePayload = buildResponsePayload(responseBody, resp, "object", [], []);
-        return deserialize(responsePayload, ifaceSchemas.HttpAnnoServiceBumpResponseSchema) as ifaceTypes.HttpAnnoServiceBumpResponse;
-        
+            const responsePayload = buildResponsePayload(responseBody, resp, "object", [], []);
+            return deserialize(responsePayload, ifaceSchemas.HttpAnnoServiceBumpResponseSchema) as ifaceTypes.HttpAnnoServiceBumpResponse;
+            
     }
     
         async get_count(): Promise<ifaceTypes.HttpAnnoServiceGetCountResponse> {
@@ -259,9 +259,9 @@ export class HttpAnnoServiceClient {
             
         }
         const responseBody = await decodeOptionalResponseBody(resp, "text/plain", this.codecs, ifaceSchemas.HttpAnnoServiceGetCountResponseSchema);
-        const responsePayload = buildResponsePayload(responseBody, resp, "object", [], []);
-        return deserialize(responsePayload, ifaceSchemas.HttpAnnoServiceGetCountResponseSchema) as ifaceTypes.HttpAnnoServiceGetCountResponse;
-        
+            const responsePayload = buildResponsePayload(responseBody, resp, "object", [], []);
+            return deserialize(responsePayload, ifaceSchemas.HttpAnnoServiceGetCountResponseSchema) as ifaceTypes.HttpAnnoServiceGetCountResponse;
+            
     }
     
         async ping(): Promise<void> {
@@ -284,7 +284,7 @@ export class HttpAnnoServiceClient {
             
         }
         return;
-        
+            
     }
     
     

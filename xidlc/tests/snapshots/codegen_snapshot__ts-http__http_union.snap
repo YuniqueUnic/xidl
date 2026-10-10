@@ -78,20 +78,20 @@ export class FilesClient {
             
         }
         
-        const contentType = (resp.headers.get("Content-Type") ?? "").split(";")[0].trim();
-        
-        if (contentType === "application/json") {
-            const value = await resp.json();
-            return { kind: "Json", value } as { kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array };
-        }
-        
-        if (contentType === "application/octet-stream") {
-            const value = new Uint8Array(await resp.arrayBuffer());
-            return { kind: "OctetStream", value } as { kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array };
-        }
-        
-        throw await parseXidlError(resp);
-        
+            const contentType = (resp.headers.get("Content-Type") ?? "").split(";")[0].trim();
+            
+                if (contentType === "application/json") {
+                    const value = await resp.json();
+                    return { kind: "Json", value } as { kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array };
+                }
+            
+                if (contentType === "application/octet-stream") {
+                    const value = new Uint8Array(await resp.arrayBuffer());
+                    return { kind: "OctetStream", value } as { kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array };
+                }
+            
+            throw await parseXidlError(resp);
+            
     }
     
         async get_file(path: string): Promise<{ kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string }> {
@@ -116,33 +116,33 @@ export class FilesClient {
             
         }
         
-        const contentType = (resp.headers.get("Content-Type") ?? "").split(";")[0].trim();
-        
-        if (contentType === "application/json") {
-            const value = await resp.json();
-            return { kind: "Json", value, etag: readResponseHeader(resp.headers, "ETag", false) as never } as { kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string };
-        }
-        
-        if (contentType === "application/octet-stream") {
-            const value = new Uint8Array(await resp.arrayBuffer());
-            return { kind: "OctetStream", value, etag: readResponseHeader(resp.headers, "ETag", false) as never } as { kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string };
-        }
-        
-        throw await parseXidlError(resp);
-        
+            const contentType = (resp.headers.get("Content-Type") ?? "").split(";")[0].trim();
+            
+                if (contentType === "application/json") {
+                    const value = await resp.json();
+                    return { kind: "Json", value, etag: readResponseHeader(resp.headers, "ETag", false) as never } as { kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string };
+                }
+            
+                if (contentType === "application/octet-stream") {
+                    const value = new Uint8Array(await resp.arrayBuffer());
+                    return { kind: "OctetStream", value, etag: readResponseHeader(resp.headers, "ETag", false) as never } as { kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string };
+                }
+            
+            throw await parseXidlError(resp);
+            
     }
     
     
         async throwGetMetaError(resp: Response): Promise<never> {
             const status = resp.status;
             
-            if (status === 404) {
-                const body = (await resp.json().catch(() => ({}))) as Record<string, unknown>;
-                throw new NotFound({
-                    "code": body["code"] as never,
-                    "msg": body["msg"] as never,
-                    });
-            }
+                if (status === 404) {
+                    const body = (await resp.json().catch(() => ({}))) as Record<string, unknown>;
+                    throw new NotFound({
+                        "code": body["code"] as never,
+                        "msg": body["msg"] as never,
+                        });
+                }
             
             throw await parseXidlError(resp);
         }
@@ -150,13 +150,13 @@ export class FilesClient {
         async throwGetFileError(resp: Response): Promise<never> {
             const status = resp.status;
             
-            if (status === 404) {
-                const body = (await resp.json().catch(() => ({}))) as Record<string, unknown>;
-                throw new NotFound({
-                    "code": body["code"] as never,
-                    "msg": body["msg"] as never,
-                    });
-            }
+                if (status === 404) {
+                    const body = (await resp.json().catch(() => ({}))) as Record<string, unknown>;
+                    throw new NotFound({
+                        "code": body["code"] as never,
+                        "msg": body["msg"] as never,
+                        });
+                }
             
             throw await parseXidlError(resp);
         }
@@ -201,11 +201,11 @@ http_union.errors.ts
 
 
 
-/** Typed HTTP error for status 404 responses. */
-export class NotFound extends Error {
-    readonly status = 404;
-    readonly kind = "NotFound" as const;
-    readonly code: number;
+    /** Typed HTTP error for status 404 responses. */
+    export class NotFound extends Error {
+        readonly status = 404;
+        readonly kind = "NotFound" as const;
+        readonly code: number;
     readonly msg: string;
     
     constructor(fields: {
@@ -340,19 +340,19 @@ export const FilesOperations = {
         },
         security: [],
         
-        errors: {
-            match: (error: unknown) => {
-                
-                if (error instanceof NotFound) {
-                    const headers = new Headers();
-                    headers.set("Content-Type", "application/json");
-                    return {
-                        status: 404,
-                        headers,
-                        body: { "code": error.code, "msg": error.msg, },
-                    };
+            errors: {
+                match: (error: unknown) => {
                     
-                }
+                        if (error instanceof NotFound) {
+                            const headers = new Headers();
+                            headers.set("Content-Type", "application/json");
+                            return {
+                                status: 404,
+                                headers,
+                                body: { "code": error.code, "msg": error.msg, },
+                            };
+                            
+                    }
                 
                 return undefined;
             },
@@ -392,19 +392,19 @@ export const FilesOperations = {
         },
         security: [],
         
-        errors: {
-            match: (error: unknown) => {
-                
-                if (error instanceof NotFound) {
-                    const headers = new Headers();
-                    headers.set("Content-Type", "application/json");
-                    return {
-                        status: 404,
-                        headers,
-                        body: { "code": error.code, "msg": error.msg, },
-                    };
+            errors: {
+                match: (error: unknown) => {
                     
-                }
+                        if (error instanceof NotFound) {
+                            const headers = new Headers();
+                            headers.set("Content-Type", "application/json");
+                            return {
+                                status: 404,
+                                headers,
+                                body: { "code": error.code, "msg": error.msg, },
+                            };
+                            
+                    }
                 
                 return undefined;
             },

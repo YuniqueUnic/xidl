@@ -49,14 +49,15 @@ pub struct HttpResponseShapeServiceGetCountResponse {
 impl From<HttpResponseShapeServiceGetCountResponse>
 for HttpResponseShapeServiceGetCountResponseOutBody {
     fn from(value: HttpResponseShapeServiceGetCountResponse) -> Self {
-        Self { count: value.count }
+        value.count
     }
 }
 #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
 impl From<HttpResponseShapeServiceGetCountResponseInBody>
 for HttpResponseShapeServiceGetCountResponse {
     fn from(value: HttpResponseShapeServiceGetCountResponseInBody) -> Self {
-        Self { count: value.count }
+        let out = value;
+        Self { count: out }
     }
 }
 #[derive(::serde::Serialize)]
@@ -116,13 +117,11 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpResponseShapeServiceAddResponseOutBody {
-    #[serde(flatten)]
     pub r#return: i32,
     pub sum: i32,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpResponseShapeServiceAddResponseInBody {
-    #[serde(flatten)]
     pub r#return: i32,
     pub sum: i32,
 }
@@ -196,13 +195,11 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpResponseShapeServiceBumpResponseOutBody {
-    #[serde(flatten)]
     pub r#return: i32,
     pub value: i32,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpResponseShapeServiceBumpResponseInBody {
-    #[serde(flatten)]
     pub r#return: i32,
     pub value: i32,
 }

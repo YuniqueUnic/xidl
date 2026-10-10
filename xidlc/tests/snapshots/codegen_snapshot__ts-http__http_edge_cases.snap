@@ -76,7 +76,7 @@ export class HttpEdgeCasesServiceClient {
             
         }
         return;
-        
+            
     }
     
         async get_user(uid: number, locale: string): Promise<string> {

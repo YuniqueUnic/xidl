@@ -371,13 +371,11 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpAnnoServiceAddResponseOutBody {
-    #[serde(flatten)]
     pub r#return: i32,
     pub sum: i32,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpAnnoServiceAddResponseInBody {
-    #[serde(flatten)]
     pub r#return: i32,
     pub sum: i32,
 }
@@ -448,13 +446,11 @@ where
 }
 #[derive(::serde::Serialize)]
 pub struct HttpAnnoServiceBumpResponseOutBody {
-    #[serde(flatten)]
     pub r#return: i32,
     pub value: i32,
 }
 #[derive(::serde::Deserialize)]
 pub struct HttpAnnoServiceBumpResponseInBody {
-    #[serde(flatten)]
     pub r#return: i32,
     pub value: i32,
 }
@@ -488,13 +484,14 @@ pub struct HttpAnnoServiceGetCountResponse {
 #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
 impl From<HttpAnnoServiceGetCountResponse> for HttpAnnoServiceGetCountResponseOutBody {
     fn from(value: HttpAnnoServiceGetCountResponse) -> Self {
-        Self { count: value.count }
+        value.count
     }
 }
 #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
 impl From<HttpAnnoServiceGetCountResponseInBody> for HttpAnnoServiceGetCountResponse {
     fn from(value: HttpAnnoServiceGetCountResponseInBody) -> Self {
-        Self { count: value.count }
+        let out = value;
+        Self { count: out }
     }
 }
 pub struct HttpAnnoServiceServer<T> {

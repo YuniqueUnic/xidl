@@ -120,7 +120,7 @@ export class HttpStreamSseServiceClient {
             
         }
         return;
-        
+            
     }
     
         watch_attribute_online(): AsyncIterable<boolean> {
