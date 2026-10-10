@@ -84,7 +84,20 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetMetaError {
                 ::xidl_rust_axum::axum::response::IntoResponse::into_response(err)
             }
             Self::NotFound(err) => {
-                let mut headers = ::xidl_rust_axum::axum::http::HeaderMap::new();
+                let headers = (|| -> xidl_rust_axum::Result<
+                    ::xidl_rust_axum::axum::http::HeaderMap,
+                > {
+                    let headers = ::xidl_rust_axum::axum::http::HeaderMap::new();
+                    Ok(headers)
+                })();
+                let headers = match headers {
+                    Ok(headers) => headers,
+                    Err(err) => {
+                        return ::xidl_rust_axum::axum::response::IntoResponse::into_response(
+                            err,
+                        );
+                    }
+                };
                 let body = match xidl_rust_axum::serde_json::to_vec(&err) {
                     Ok(body) => body,
                     Err(err) => {
@@ -104,7 +117,7 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetMetaError {
                     )
                     .body(::xidl_rust_axum::axum::body::Body::from(body))
                     .expect("error response should build");
-                *response.headers_mut() = headers;
+                response.headers_mut().extend(headers);
                 response
             }
         }
@@ -130,7 +143,20 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetFileError {
                 ::xidl_rust_axum::axum::response::IntoResponse::into_response(err)
             }
             Self::NotFound(err) => {
-                let mut headers = ::xidl_rust_axum::axum::http::HeaderMap::new();
+                let headers = (|| -> xidl_rust_axum::Result<
+                    ::xidl_rust_axum::axum::http::HeaderMap,
+                > {
+                    let headers = ::xidl_rust_axum::axum::http::HeaderMap::new();
+                    Ok(headers)
+                })();
+                let headers = match headers {
+                    Ok(headers) => headers,
+                    Err(err) => {
+                        return ::xidl_rust_axum::axum::response::IntoResponse::into_response(
+                            err,
+                        );
+                    }
+                };
                 let body = match xidl_rust_axum::serde_json::to_vec(&err) {
                     Ok(body) => body,
                     Err(err) => {
@@ -150,7 +176,7 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetFileError {
                     )
                     .body(::xidl_rust_axum::axum::body::Body::from(body))
                     .expect("error response should build");
-                *response.headers_mut() = headers;
+                response.headers_mut().extend(headers);
                 response
             }
         }
@@ -588,7 +614,10 @@ impl FilesClient {
                 let mut value: NotFound = resp
                     .json::<NotFound>()
                     .await
-                    .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
+                    .map_err(|err| xidl_rust_axum::Error::new(
+                        status.as_u16(),
+                        format!("exception NotFound body: {err}"),
+                    ))?;
                 return Err(FilesGetMetaError::NotFound(value));
             }
             let body = resp.json::<xidl_rust_axum::ErrorBody>().await.ok();
@@ -697,7 +726,10 @@ impl FilesClient {
                 let mut value: NotFound = resp
                     .json::<NotFound>()
                     .await
-                    .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
+                    .map_err(|err| xidl_rust_axum::Error::new(
+                        status.as_u16(),
+                        format!("exception NotFound body: {err}"),
+                    ))?;
                 return Err(FilesGetFileError::NotFound(value));
             }
             let body = resp.json::<xidl_rust_axum::ErrorBody>().await.ok();

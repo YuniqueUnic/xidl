@@ -37,13 +37,13 @@ export function encodeOperationResponse<TService>(
     );
     if (representation) {
       const headers = new Headers();
-      writeBindings(
+      writeResponseBindings(
         headers,
         toRecord(wrapper),
         operation.response.headers,
         false,
       );
-      writeBindings(
+      writeResponseBindings(
         headers,
         toRecord(wrapper),
         operation.response.cookies,
@@ -67,8 +67,8 @@ export function encodeOperationResponse<TService>(
     : parsed;
   const record = toRecord(serialized);
   const headers = new Headers();
-  writeBindings(headers, record, operation.response.headers, false);
-  writeBindings(headers, record, operation.response.cookies, true);
+  writeResponseBindings(headers, record, operation.response.headers, false);
+  writeResponseBindings(headers, record, operation.response.cookies, true);
 
   if (operation.response.bodyMode === 'none') {
     return new Response(null, { headers, status: 204 });
@@ -118,7 +118,7 @@ function selectBody(
   );
 }
 
-function writeBindings(
+export function writeResponseBindings(
   headers: Headers,
   record: Record<string, unknown>,
   bindings: ValueBinding[],

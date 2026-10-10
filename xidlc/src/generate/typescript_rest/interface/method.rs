@@ -350,7 +350,7 @@ impl MethodModel {
             security: security_contexts(op),
             request_fields,
             response_fields,
-            raises: TsRaisesContext::for_operation(op, exceptions, module_path),
+            raises: TsRaisesContext::for_operation(op, exceptions),
         })
     }
 }

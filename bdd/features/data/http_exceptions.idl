@@ -1,0 +1,50 @@
+#pragma xidlc package Demo API
+#pragma xidlc version v1
+
+@http(304)
+exception NotModified {
+    @header @rename("ETag") string etag;
+};
+
+@http(status = 412)
+exception PreconditionFailed {
+    @header @rename("ETag") string etag;
+    @header @optional @rename("X-Hint") sequence<string> hints;
+    @cookie @rename("session") string session_id;
+    @cookie @optional @rename("retry") string retry_token;
+    @cookie @optional @rename("attempt") sequence<string> attempts;
+    @body uint32 code;
+    @body @rename("message") string msg;
+    @body @optional string detail;
+};
+
+@http(404)
+exception NotFound {
+    @body uint32 code;
+    @body string msg;
+};
+
+struct FileMeta {
+    string id;
+    string etag;
+};
+
+@no_security
+interface Files {
+    @get(path = "/files/{id}")
+    FileMeta get_file(@path string id)
+        raises(NotModified, PreconditionFailed, NotFound);
+};
+
+module left {
+    struct Detail { string message; };
+    @http(409) exception Failure { @body Detail detail; };
+};
+module right {
+    @http(422) exception Failure { @body string reason; };
+};
+@no_security
+interface Scoped {
+    @get(path = "/scoped")
+    string read() raises(left::Failure, ::right::Failure);
+};
