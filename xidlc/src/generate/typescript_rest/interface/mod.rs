@@ -1,11 +1,11 @@
+mod exceptions;
 mod helpers;
 mod render_types;
 mod websocket_helpers;
 
 use super::model::{
-    ClientClassContext, MethodModel, PathParamContext, RequestPayloadEntry,
-    TsExceptionFieldContext, TsExceptionMemberContext, TsHttpBlocks, TsRaisesContext,
-    TsRepresentationContext,
+    ClientClassContext, MethodModel, PathParamContext, RequestPayloadEntry, TsHttpBlocks,
+    TsRaisesContext, TsRepresentationContext,
 };
 use super::server::ServerClass;
 use crate::error::IdlcResult;
@@ -102,11 +102,9 @@ fn build_method_model(
     // A lone `sequence<octet>` body is raw bytes: it carries no schema and
     // surfaces to clients as `Uint8Array`.
     let byte_body_param = match &op.http.request.body.shape {
-        HttpRequestBodyShape::SingleValue { source_param, ty, .. }
-            if is_byte_sequence(ty) =>
-        {
-            Some(source_param.clone())
-        }
+        HttpRequestBodyShape::SingleValue {
+            source_param, ty, ..
+        } if is_byte_sequence(ty) => Some(source_param.clone()),
         _ => None,
     };
 
@@ -273,8 +271,8 @@ fn build_method_model(
                 op.http.request.body.codec,
                 Some(xidl_parser::rest_hir::HttpBodyCodec::Text)
             );
-            let single = (*flatten || is_text || is_byte_sequence(ty))
-                .then(|| source_param.clone());
+            let single =
+                (*flatten || is_text || is_byte_sequence(ty)).then(|| source_param.clone());
             (entries, single)
         }
         HttpRequestBodyShape::Object { fields } => {
@@ -467,44 +465,6 @@ fn build_method_model(
         security: security_contexts(op),
         request_fields,
         response_fields,
-        raises: build_raises_contexts(op, exceptions, module_path),
+        raises: TsRaisesContext::for_operation(op, exceptions, module_path),
     })
-}
-
-/// Pairs each `raises(...)` ref with its projected exception for the
-/// typescript-rest templates.
-fn build_raises_contexts(
-    op: &HttpOperation,
-    exceptions: &[xidl_parser::rest_hir::HttpException],
-    module_path: &[String],
-) -> Vec<TsRaisesContext> {
-    op.meta
-        .raises
-        .iter()
-        .filter_map(|refer| {
-            let exception = exceptions
-                .iter()
-                .find(|e| e.ident == refer.ident && e.module_path == refer.module_path)?;
-            let member =
-                |m: &xidl_parser::rest_hir::HttpExceptionMember| TsExceptionMemberContext {
-                    field: m.field.clone(),
-                    wire_name: m.wire_name.clone(),
-                    ty: ts_type_for_type_spec(&m.ty, module_path, TypeRefTarget::Client),
-                    is_multi: m.is_multi,
-                    optional: m.optional,
-                };
-            let field = |f: &xidl_parser::rest_hir::HttpExceptionField| TsExceptionFieldContext {
-                field: f.field.clone(),
-                ty: ts_type_for_type_spec(&f.ty, module_path, TypeRefTarget::Client),
-            };
-            Some(TsRaisesContext {
-                ident: exception.ident.clone(),
-                status: exception.status,
-                has_body: !exception.body.is_empty(),
-                headers: exception.headers.iter().map(member).collect(),
-                cookies: exception.cookies.iter().map(member).collect(),
-                body: exception.body.iter().map(field).collect(),
-            })
-        })
-        .collect()
 }

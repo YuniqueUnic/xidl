@@ -1,4 +1,5 @@
 mod attr;
+mod exceptions;
 pub mod mapping;
 mod model;
 mod project;
