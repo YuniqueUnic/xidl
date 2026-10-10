@@ -8,7 +8,7 @@ use super::helpers::{
 };
 use crate::error::IdlcResult;
 use crate::generate::typescript::definition::TypeRefTarget;
-use crate::generate::typescript::definition::contexts::{ParamDeclContext, TsType};
+use crate::generate::typescript::definition::contexts::{ParamDeclContext, TsType, ZodSchema};
 use crate::generate::typescript::definition::names::{method_struct_prefix, scoped_name, ts_ident};
 use crate::generate::typescript::definition::type_expr::{
     ts_type_for_type_spec, zod_schema_for_type_spec_with_prefix,
@@ -57,13 +57,20 @@ impl MethodModel {
                         | xidl_parser::rest_hir::HttpSignatureParamDirection::InOut
                 )
             })
-            .filter(|p| byte_body_param.as_deref() != Some(p.name.as_str()))
             .map(|p| ParamDeclContext {
                 prop: crate::generate::typescript::definition::names::ts_prop_name(&p.name),
                 // The iface file is separate from the model file, so model types are
                 // referenced through the `types` namespace import.
-                ty: ts_type_for_type_spec(&p.ty, module_path, TypeRefTarget::Client),
-                schema: zod_schema_for_type_spec_with_prefix(&p.ty, module_path, Some("models")),
+                ty: if byte_body_param.as_deref() == Some(p.name.as_str()) {
+                    TsType::Primitive("Uint8Array".into())
+                } else {
+                    ts_type_for_type_spec(&p.ty, module_path, TypeRefTarget::Client)
+                },
+                schema: if byte_body_param.as_deref() == Some(p.name.as_str()) {
+                    ZodSchema::Primitive("instanceof(Uint8Array)".into())
+                } else {
+                    zod_schema_for_type_spec_with_prefix(&p.ty, module_path, Some("models"))
+                },
                 optional: p.annotations.iter().any(|a| {
                     matches!(
                         a,
@@ -87,7 +94,12 @@ impl MethodModel {
             .map(|name| scoped_name(module_path, name));
 
         let representations = TsRepresentationContext::for_operation(op, module_path);
-        let union_wrapper = TsRepresentationContext::response_type(op, &representations);
+        let union_wrapper = TsRepresentationContext::response_type(
+            op,
+            &representations,
+            module_path,
+            &response_fields,
+        );
 
         let mut return_ty = if let Some(wrapper) = &union_wrapper {
             wrapper.clone()
@@ -231,7 +243,9 @@ impl MethodModel {
         let body_schema_ref = match &op.http.request.body.shape {
             HttpRequestBodyShape::Empty => None,
             HttpRequestBodyShape::SingleValue { flatten, ty, .. } => {
-                if *flatten {
+                if is_byte_sequence(ty) {
+                    None
+                } else if *flatten {
                     match ty {
                         hir::TypeSpec::ScopedName(scoped) => {
                             let parts =
@@ -280,21 +294,6 @@ impl MethodModel {
         Ok(MethodModel {
             union_wrapper,
             representations,
-            union_header_out: op
-                .http
-                .response
-                .header
-                .iter()
-                .filter_map(|binding| match &binding.source {
-                    xidl_parser::rest_hir::HttpOutputSource::Param { name } => {
-                        Some(super::super::model::UnionHeaderOutContext {
-                            name: name.clone(),
-                            wire: binding.wire_name.clone(),
-                        })
-                    }
-                    xidl_parser::rest_hir::HttpOutputSource::ReturnValue => None,
-                })
-                .collect(),
             name: ts_ident(&op.meta.name),
             params: build_client_params(op, module_path, &request_name),
             request_name,
@@ -332,8 +331,14 @@ impl MethodModel {
             query_params: build_value_params(&op.http.request.query),
             header_params: build_value_params(&op.http.request.header),
             cookie_params: build_value_params(&op.http.request.cookie),
-            response_header_params: build_response_value_params(&op.http.response.header),
-            response_cookie_params: build_response_value_params(&op.http.response.cookie),
+            response_header_params: build_response_value_params(
+                &op.http.response.header,
+                &response_fields,
+            ),
+            response_cookie_params: build_response_value_params(
+                &op.http.response.cookie,
+                &response_fields,
+            ),
             body_entries,
             body_single,
             return_ty,

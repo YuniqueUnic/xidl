@@ -56,8 +56,7 @@ for HttpResponseShapeServiceGetCountResponseOutBody {
 impl From<HttpResponseShapeServiceGetCountResponseInBody>
 for HttpResponseShapeServiceGetCountResponse {
     fn from(value: HttpResponseShapeServiceGetCountResponseInBody) -> Self {
-        let out = value;
-        Self { count: out }
+        Self { count: value }
     }
 }
 #[derive(::serde::Serialize)]
@@ -100,12 +99,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpResponseShapeServiceAddRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )
@@ -178,12 +182,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpResponseShapeServiceBumpRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "text/plain",
                 )

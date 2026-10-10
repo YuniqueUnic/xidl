@@ -1,6 +1,6 @@
 import { serialize, type XidlSchema } from 'xidl-typescript-codec';
 
-import { encodeScalar, normalizeMime } from './scalar.ts';
+import { assertAccepts, encodeScalar, normalizeMime } from './scalar.ts';
 import { byteStreamResponse, sseResponse } from './stream.ts';
 import type {
   BodyField,
@@ -12,6 +12,7 @@ import type {
 export function encodeOperationResponse<TService>(
   operation: OperationDescriptor<TService>,
   result: unknown,
+  requestHeaders: Headers,
   codecs: Record<string, HttpCodec>,
 ): Response {
   if (operation.response.stream) {
@@ -36,6 +37,7 @@ export function encodeOperationResponse<TService>(
       representation => representation.kind === wrapper.kind,
     );
     if (representation) {
+      assertAccepts(requestHeaders, representation.contentType);
       const headers = new Headers();
       writeResponseBindings(
         headers,
@@ -56,7 +58,11 @@ export function encodeOperationResponse<TService>(
           ? null
           : value instanceof Uint8Array
             ? (value as BodyInit)
-            : JSON.stringify(value);
+            : encodeBody(
+                value,
+                normalizeMime(representation.contentType),
+                codecs,
+              );
       return new Response(body, { headers, status: 200 });
     }
   }

@@ -233,14 +233,10 @@ pub(crate) fn render_op_from_http(
         http_op.http.request.body.shape,
         HttpRequestBodyShape::SingleValue { flatten, .. } if flatten || is_text
     );
-    let response_is_text = matches!(
-        http_op.http.response.body.codec,
-        Some(xidl_parser::rest_hir::HttpBodyCodec::Text)
-    );
-    let response_body_flatten = matches!(
+    let response_body_is_value = matches!(
         http_op.http.response.body.shape,
-        HttpResponseBodyShape::SingleValue { .. }
-    ) && response_is_text;
+        HttpResponseBodyShape::ReturnOnly { .. } | HttpResponseBodyShape::SingleValue { .. }
+    );
     let response_include_return = has_return;
     let response_is_empty = matches!(
         http_op.http.response.body.shape,
@@ -295,7 +291,7 @@ pub(crate) fn render_op_from_http(
         ret,
         response_ty: response_ty_str,
         request_body_flatten,
-        response_body_flatten,
+        response_body_is_value,
         http_method: http_method_code(method),
         http_method_fn: http_method_fn(method),
         reqwest_method: reqwest_method_code(method),

@@ -10,7 +10,7 @@ http_union.client.ts
 
 import type * as types from "./http_union";
 import { readResponseCookies, readResponseHeader } from "xidl-typescript-client";
-import { NotFound } from "./http_union.errors";
+import * as $xidlErrors from "./http_union.errors";
 
 import type * as ifaceTypes from "./http_union.iface";
 import * as ifaceSchemas from "./http_union.iface.zod";
@@ -42,39 +42,39 @@ import {
 } from "xidl-typescript-client";
 
     
-export class FilesClient {
-    private readonly baseUrl: string;
-    private readonly fetchImpl: FetchLike;
-    private readonly defaultHeaders: Record<string, string>;
-    private readonly auth?: ClientAuth;
-    private readonly codecs: Record<string, HttpCodec>;
 
-    constructor(baseUrl: string, options: ClientOptions = {}) {
-        this.baseUrl = baseUrl;
-        this.fetchImpl = resolveFetch(options.fetch);
-        this.defaultHeaders = options.headers ?? {};
-        this.auth = options.auth;
-        this.codecs = options.codecs ?? {};
-    }
-    
-        async get_meta(path: string): Promise<{ kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array }> {
-            const parsed = ifaceSchemas.FilesGetMetaRequestSchema.parse({ "path": path });
-            let xidlPath = "/meta";
-            const query = new URLSearchParams();
-            appendParam(query, "path", path, false, false);
-            const headers = new Headers(this.defaultHeaders);
-            const cookies: string[] = [];
-            applyCookies(headers, cookies);
-            applyClientAuth(xidlPath, query, headers, this.auth, []);
-            const queryString = query.toString();
-            if (queryString.length > 0) {
-                xidlPath = `${xidlPath}?${queryString}`;
-            }
-            const url = joinUrl(this.baseUrl, xidlPath);
-            headers.set("Accept", "application/json, application/octet-stream");
-        const resp = await this.fetchImpl(url, { method: "GET", headers });
+    export class FilesClient {
+        private readonly baseUrl: string;
+        private readonly fetchImpl: FetchLike;
+        private readonly defaultHeaders: Record<string, string>;
+        private readonly auth?: ClientAuth;
+        private readonly codecs: Record<string, HttpCodec>;
+
+        constructor(baseUrl: string, options: ClientOptions = {}) {
+            this.baseUrl = baseUrl;
+            this.fetchImpl = resolveFetch(options.fetch);
+            this.defaultHeaders = options.headers ?? {};
+            this.auth = options.auth;
+            this.codecs = options.codecs ?? {};
+        }
         
-                if (!resp.ok) {
+            async get_meta(path: string): Promise<{ kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array }> {
+                const parsed = ifaceSchemas.FilesGetMetaRequestSchema.parse({ "path": path });
+                let xidlPath = "/meta";
+                const query = new URLSearchParams();
+                appendParam(query, "path", path, false, false);
+                const headers = new Headers(this.defaultHeaders);
+                const cookies: string[] = [];
+                applyCookies(headers, cookies);
+                applyClientAuth(xidlPath, query, headers, this.auth, []);
+                const queryString = query.toString();
+                if (queryString.length > 0) {
+                    xidlPath = `${xidlPath}?${queryString}`;
+                }
+                const url = joinUrl(this.baseUrl, xidlPath);
+                headers.set("Accept", "application/json, application/octet-stream");
+        const resp = await this.fetchImpl(url, { method: "GET", headers });
+        if (!resp.ok) {
             await this.throwGetMetaError(resp);
             
         }
@@ -82,37 +82,36 @@ export class FilesClient {
             const contentType = (resp.headers.get("Content-Type") ?? "").split(";")[0].trim();
             
                 if (contentType === "application/json") {
-                    const value = await resp.json();
-                    return { kind: "Json", value } as { kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array };
+                    const value = await decodeResponseBody(resp, "application/json", this.codecs);
+                    return { kind: "Json", value, ...buildResponsePayload(undefined, resp, "none", [], [], []) } as { kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array };
                 }
             
                 if (contentType === "application/octet-stream") {
                     const value = new Uint8Array(await resp.arrayBuffer());
-                    return { kind: "OctetStream", value } as { kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array };
+                    return { kind: "OctetStream", value, ...buildResponsePayload(undefined, resp, "none", [], [], []) } as { kind: "Json", value: types.FileMeta } | { kind: "OctetStream", value: Uint8Array };
                 }
             
             throw await parseXidlError(resp);
             
     }
     
-        async get_file(path: string): Promise<{ kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string }> {
-            const parsed = ifaceSchemas.FilesGetFileRequestSchema.parse({ "path": path });
-            let xidlPath = "/file";
-            const query = new URLSearchParams();
-            appendParam(query, "path", path, false, false);
-            const headers = new Headers(this.defaultHeaders);
-            const cookies: string[] = [];
-            applyCookies(headers, cookies);
-            applyClientAuth(xidlPath, query, headers, this.auth, []);
-            const queryString = query.toString();
-            if (queryString.length > 0) {
-                xidlPath = `${xidlPath}?${queryString}`;
-            }
-            const url = joinUrl(this.baseUrl, xidlPath);
-            headers.set("Accept", "application/json, application/octet-stream");
+            async get_file(path: string): Promise<{ kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string }> {
+                const parsed = ifaceSchemas.FilesGetFileRequestSchema.parse({ "path": path });
+                let xidlPath = "/file";
+                const query = new URLSearchParams();
+                appendParam(query, "path", path, false, false);
+                const headers = new Headers(this.defaultHeaders);
+                const cookies: string[] = [];
+                applyCookies(headers, cookies);
+                applyClientAuth(xidlPath, query, headers, this.auth, []);
+                const queryString = query.toString();
+                if (queryString.length > 0) {
+                    xidlPath = `${xidlPath}?${queryString}`;
+                }
+                const url = joinUrl(this.baseUrl, xidlPath);
+                headers.set("Accept", "application/json, application/octet-stream");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        
-                if (!resp.ok) {
+        if (!resp.ok) {
             await this.throwGetFileError(resp);
             
         }
@@ -120,13 +119,13 @@ export class FilesClient {
             const contentType = (resp.headers.get("Content-Type") ?? "").split(";")[0].trim();
             
                 if (contentType === "application/json") {
-                    const value = await resp.json();
-                    return { kind: "Json", value, etag: readResponseHeader(resp.headers, "ETag", false) as never } as { kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string };
+                    const value = await decodeResponseBody(resp, "application/json", this.codecs);
+                    return { kind: "Json", value, ...buildResponsePayload(undefined, resp, "none", [], [{ name: "ETag", key: "etag", optional: false, isMulti: false, decode: value => value }], []) } as { kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string };
                 }
             
                 if (contentType === "application/octet-stream") {
                     const value = new Uint8Array(await resp.arrayBuffer());
-                    return { kind: "OctetStream", value, etag: readResponseHeader(resp.headers, "ETag", false) as never } as { kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string };
+                    return { kind: "OctetStream", value, ...buildResponsePayload(undefined, resp, "none", [], [{ name: "ETag", key: "etag", optional: false, isMulti: false, decode: value => value }], []) } as { kind: "Json", value: types.FileMeta, etag: string } | { kind: "OctetStream", value: Uint8Array, etag: string };
                 }
             
             throw await parseXidlError(resp);
@@ -143,7 +142,7 @@ export class FilesClient {
                 const decoded = bodySchema.safeParse(deserialize(rawBody, bodySchema));
                 if (!decoded.success) throw await parseXidlError(resp);
                 const body = decoded.data;
-                throw new NotFound({
+                throw new $xidlErrors.NotFound({
                     "code": body["code"] as never,
                     "msg": body["msg"] as never,
                     });
@@ -160,7 +159,7 @@ export class FilesClient {
                 const decoded = bodySchema.safeParse(deserialize(rawBody, bodySchema));
                 if (!decoded.success) throw await parseXidlError(resp);
                 const body = decoded.data;
-                throw new NotFound({
+                throw new $xidlErrors.NotFound({
                     "code": body["code"] as never,
                     "msg": body["msg"] as never,
                     });
@@ -296,7 +295,7 @@ http_union.server.ts
 
 
 import type * as types from "./http_union";
-import { NotFound } from "./http_union.errors";
+import * as $xidlErrors from "./http_union.errors";
 
 import type * as ifaceTypes from "./http_union.iface";
 import * as ifaceSchemas from "./http_union.iface.zod";
@@ -352,7 +351,7 @@ export const FilesOperations = {
             errors: {
                 match: (error: unknown) => {
                     
-                        if (error instanceof NotFound) {
+                        if (error instanceof $xidlErrors.NotFound) {
                             const headers = new Headers();
                             writeResponseBindings(headers, { ...error }, [], false);
                             writeResponseBindings(headers, { ...error }, [], true);
@@ -406,7 +405,7 @@ export const FilesOperations = {
             errors: {
                 match: (error: unknown) => {
                     
-                        if (error instanceof NotFound) {
+                        if (error instanceof $xidlErrors.NotFound) {
                             const headers = new Headers();
                             writeResponseBindings(headers, { ...error }, [], false);
                             writeResponseBindings(headers, { ...error }, [], true);

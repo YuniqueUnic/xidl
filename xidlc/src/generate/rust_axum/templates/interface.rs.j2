@@ -44,6 +44,26 @@
                 Framework(xidl_rust_axum::Error),
             }
 
+            impl ::std::fmt::Display for {{ method.error_ty }} {
+                fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+                match self {
+                    {% for ex in method.raises %}
+                        Self::{{ ex.variant }}(_) => f.write_str("HTTP {{ ex.status }}: {{ ex.variant }}"),
+                    {% endfor %}
+                    Self::Framework(err) => ::std::fmt::Display::fmt(err, f),
+                }
+            }
+            }
+
+            impl ::std::error::Error for {{ method.error_ty }} {
+                fn source(&self) -> Option<&(dyn ::std::error::Error + 'static)> {
+                match self {
+                    Self::Framework(err) => Some(err),
+                    _ => None,
+                }
+            }
+            }
+
             impl From<xidl_rust_axum::Error> for {{ method.error_ty }} {
                 fn from(err: xidl_rust_axum::Error) -> Self {
                     Self::Framework(err)
@@ -135,7 +155,7 @@
             {% endif %}
 
         {% endif %}
-        {% if method.body_params | length > 0 %}
+        {% if method.body_params | length > 0 and method.request_content_type != "application/octet-stream" %}
             {% if method.request_body_flatten %}
                 {% if opt.enable_client %}
                     pub type {{ method.struct_prefix }}RequestOutBody = {{ method.body_params[0].out_ty }};
@@ -325,22 +345,22 @@
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
-                            {% if method.body_params | length > 0 and method.request_content_type == "application/octet-stream" %}
-                                {# Raw byte payload: the bytes are the value; senders label them via Content-Type. #}
-                                let body = ::xidl_rust_axum::axum::body::to_bytes(body, usize::MAX)
-                                .await
-                                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?
-                                .to_vec();
-                            {% elif method.body_params | length > 0 %}
-                                if !::xidl_rust_axum::http::content_type_matches(xidl_headers, "{{ method.request_content_type }}") {
-                                    return Err(::xidl_rust_axum::Error::unsupported_media_type());
-                                }
-                                let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(body, usize::MAX)
-                                .await
-                                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
-                                let xidl_body: {{ method.struct_prefix }}RequestInBody = ::xidl_rust_axum::DeserializeFactory::new("{{ method.request_content_type }}")
-                                .from_slice(&xidl_body_bytes)?;
+                            {% if method.body_params | length > 0 %}
                                 {% if method.request_content_type != "application/octet-stream" %}
+                                    if !::xidl_rust_axum::http::content_type_matches(xidl_headers, "{{ method.request_content_type }}") {
+                                        return Err(::xidl_rust_axum::Error::unsupported_media_type());
+                                    }
+                                {% endif %}
+                                let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<S>>::from_request(
+                                ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body), state,
+                                )
+                                .await
+                                .map_err(|err| ::xidl_rust_axum::Error::new(err.status().as_u16(), err.body_text()))?;
+                                {% if method.request_content_type == "application/octet-stream" %}
+                                    let {{ method.body_params[0].name }} = xidl_body_bytes.to_vec();
+                                {% else %}
+                                    let xidl_body: {{ method.struct_prefix }}RequestInBody = ::xidl_rust_axum::DeserializeFactory::new("{{ method.request_content_type }}")
+                                    .from_slice(&xidl_body_bytes)?;
                                     {% if method.request_body_flatten %}
                                         let {{ method.body_params[0].name }} = xidl_body;
                                     {% else %}
@@ -371,7 +391,7 @@
             {% endif %}
             {% set response_body_count = method.response_body_params | length + (0 if method.return_is_unit else 1) %}
             {% if method.response_struct and response_body_count > 0 %}
-                {% if method.response_body_flatten %}
+                {% if method.response_body_is_value %}
                     {% if opt.enable_server %}
                         {% if method.response_include_return %}
                             pub type {{ method.struct_prefix }}ResponseOutBody = {{ method.ret_out_ty }};
@@ -392,7 +412,6 @@
                         #[derive(::serde::Serialize)]
                         pub struct {{ method.struct_prefix }}ResponseOutBody {
                             {% if method.response_include_return %}
-                                {% if method.response_body_flatten %}#[serde(flatten)]{% endif %}
                                 pub r#return: {{ method.ret_out_ty }},
                             {% endif %}
                             {% for param in method.response_body_params %}
@@ -408,7 +427,6 @@
                         #[derive(::serde::Deserialize)]
                         pub struct {{ method.struct_prefix }}ResponseInBody {
                             {% if method.response_include_return %}
-                                {% if method.response_body_flatten %}#[serde(flatten)]{% endif %}
                                 pub r#return: {{ method.ret_in_ty }},
                             {% endif %}
                             {% for param in method.response_body_params %}
@@ -443,22 +461,22 @@
                         #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
                         impl From<{{ method.response_struct }}> for {{ method.struct_prefix }}ResponseOutBody {
                             fn from(value: {{ method.response_struct }}) -> Self {
-                                {%- if method.response_body_flatten %}
-                                {# The out-body is the bare single value: the return when present, otherwise the first body parameter. #}
-                                {% if method.response_include_return %}
-                                    {{ method.ret_out_expr | replace("resp_value", "value.r#return") }}
-                                {% else %}
-                                    {{ method.response_body_params[0].field_out_expr }}
-                                {% endif %}
-                                {%- else %}
-                                Self {
+                                {%- if method.response_body_is_value %}
+                                    {# The out-body is the bare single value: the return when present, otherwise the first body parameter. #}
                                     {% if method.response_include_return %}
-                                        r#return{% if "r#return" != method.ret_out_expr | replace("resp_value", "value.r#return") %}: {{ method.ret_out_expr | replace("resp_value", "value.r#return") }}{% endif %},
+                                        {{ method.ret_out_expr | replace("resp_value", "value.r#return") }}
+                                    {% else %}
+                                        {{ method.response_body_params[0].field_out_expr }}
                                     {% endif %}
-                                    {% for param in method.response_body_params %}
-                                        {{ param.name }}{% if param.name != param.field_out_expr %}: {{ param.field_out_expr }}{% endif %},
-                                    {% endfor %}
-                                }
+                                {%- else %}
+                                    Self {
+                                        {% if method.response_include_return %}
+                                            r#return{% if "r#return" != method.ret_out_expr | replace("resp_value", "value.r#return") %}: {{ method.ret_out_expr | replace("resp_value", "value.r#return") }}{% endif %},
+                                        {% endif %}
+                                        {% for param in method.response_body_params %}
+                                            {{ param.name }}{% if param.name != param.field_out_expr %}: {{ param.field_out_expr }}{% endif %},
+                                        {% endfor %}
+                                    }
                                 {%- endif %}
                             }
                         }
@@ -468,29 +486,35 @@
                         #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
                         impl From<{{ method.struct_prefix }}ResponseInBody> for {{ method.response_struct }} {
                             fn from(value: {{ method.struct_prefix }}ResponseInBody) -> Self {
-                                {%- if method.response_body_flatten %}
-                                {# Mirror of the server-side alias conversion. #}
-                                {% if method.response_include_return %}
-                                    {{ method.ret_in_expr | replace("body.r#return", "value") | replace("body", "value") }}
-                                {% else %}
-                                    let out = value;
-                                    Self { {{ method.response_body_params[0].name }}: out }
-                                {% endif %}
+                                {%- if method.response_body_is_value %}
+                                    Self {
+                                        {% if method.response_include_return %}
+                                            r#return: {{ method.ret_in_expr | replace("body.r#return", "value") | replace("body", "value") }},
+                                        {% else %}
+                                            {{ method.response_body_params[0].name }}{% if method.response_body_params[0].name != method.response_body_params[0].in_expr | replace(method.response_body_params[0].name, "value") %}: {{ method.response_body_params[0].in_expr | replace(method.response_body_params[0].name, "value") }}{% endif %},
+                                        {% endif %}
+                                        {% for param in method.response_header_params %}
+                                            {{ param.name }}: ::core::default::Default::default(),
+                                        {% endfor %}
+                                        {% for param in method.response_cookie_params %}
+                                            {{ param.name }}: ::core::default::Default::default(),
+                                        {% endfor %}
+                                    }
                                 {%- else %}
-                                Self {
-                                    {% if method.response_include_return %}
-                                        r#return{% if "r#return" != method.ret_in_expr | replace("body", "value.r#return") %}: {{ method.ret_in_expr | replace("body", "value.r#return") }}{% endif %},
-                                    {% endif %}
-                                    {% for param in method.response_body_params %}
-                                        {{ param.name }}{% if param.name != param.field_in_expr %}: {{ param.field_in_expr }}{% endif %},
-                                    {% endfor %}
-                                    {% for param in method.response_header_params %}
-                                        {{ param.name }}: ::core::default::Default::default(),
-                                    {% endfor %}
-                                    {% for param in method.response_cookie_params %}
-                                        {{ param.name }}: ::core::default::Default::default(),
-                                    {% endfor %}
-                                }
+                                    Self {
+                                        {% if method.response_include_return %}
+                                            r#return{% if "r#return" != method.ret_in_expr | replace("body", "value.r#return") %}: {{ method.ret_in_expr | replace("body", "value.r#return") }}{% endif %},
+                                        {% endif %}
+                                        {% for param in method.response_body_params %}
+                                            {{ param.name }}{% if param.name != param.field_in_expr %}: {{ param.field_in_expr }}{% endif %},
+                                        {% endfor %}
+                                        {% for param in method.response_header_params %}
+                                            {{ param.name }}: ::core::default::Default::default(),
+                                        {% endfor %}
+                                        {% for param in method.response_cookie_params %}
+                                            {{ param.name }}: ::core::default::Default::default(),
+                                        {% endfor %}
+                                    }
                                 {%- endif %}
                             }
                         }

@@ -71,6 +71,22 @@ pub enum FilesGetMetaError {
     NotFound(NotFound),
     Framework(xidl_rust_axum::Error),
 }
+impl ::std::fmt::Display for FilesGetMetaError {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match self {
+            Self::NotFound(_) => f.write_str("HTTP 404: NotFound"),
+            Self::Framework(err) => ::std::fmt::Display::fmt(err, f),
+        }
+    }
+}
+impl ::std::error::Error for FilesGetMetaError {
+    fn source(&self) -> Option<&(dyn ::std::error::Error + 'static)> {
+        match self {
+            Self::Framework(err) => Some(err),
+            _ => None,
+        }
+    }
+}
 impl From<xidl_rust_axum::Error> for FilesGetMetaError {
     fn from(err: xidl_rust_axum::Error) -> Self {
         Self::Framework(err)
@@ -129,6 +145,22 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetMetaError {
 pub enum FilesGetFileError {
     NotFound(NotFound),
     Framework(xidl_rust_axum::Error),
+}
+impl ::std::fmt::Display for FilesGetFileError {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match self {
+            Self::NotFound(_) => f.write_str("HTTP 404: NotFound"),
+            Self::Framework(err) => ::std::fmt::Display::fmt(err, f),
+        }
+    }
+}
+impl ::std::error::Error for FilesGetFileError {
+    fn source(&self) -> Option<&(dyn ::std::error::Error + 'static)> {
+        match self {
+            Self::Framework(err) => Some(err),
+            _ => None,
+        }
+    }
 }
 impl From<xidl_rust_axum::Error> for FilesGetFileError {
     fn from(err: xidl_rust_axum::Error) -> Self {
@@ -274,14 +306,8 @@ where
         }
     }
 }
-#[derive(::serde::Serialize)]
-pub struct FilesGetFileResponseOutBody {
-    pub r#return: FileResponse,
-}
-#[derive(::serde::Deserialize)]
-pub struct FilesGetFileResponseInBody {
-    pub r#return: FileResponse,
-}
+pub type FilesGetFileResponseOutBody = FileResponse;
+pub type FilesGetFileResponseInBody = FileResponse;
 pub struct FilesGetFileResponse {
     pub r#return: FileResponse,
     pub etag: String,
@@ -289,14 +315,14 @@ pub struct FilesGetFileResponse {
 #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
 impl From<FilesGetFileResponse> for FilesGetFileResponseOutBody {
     fn from(value: FilesGetFileResponse) -> Self {
-        Self { r#return: value.r#return }
+        value.r#return
     }
 }
 #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
 impl From<FilesGetFileResponseInBody> for FilesGetFileResponse {
     fn from(value: FilesGetFileResponseInBody) -> Self {
         Self {
-            r#return: value.r#return,
+            r#return: value,
             etag: ::core::default::Default::default(),
         }
     }

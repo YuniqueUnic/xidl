@@ -269,12 +269,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpDefaultsServiceCreateUserRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )
@@ -313,12 +318,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpDefaultsServiceCreateUserFlatRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )
@@ -368,12 +378,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpDefaultsServiceSearchUserRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )
@@ -419,12 +434,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpDefaultsServicePreviewUserRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )
@@ -747,12 +767,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpDefaultsServiceReplaceUserRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )
@@ -816,12 +841,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpDefaultsServicePatchUserRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )

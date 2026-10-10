@@ -11,6 +11,7 @@ http_scope_matrix.rs
 #[derive(Default)]
 pub struct MatrixBody {
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub alias: Option<String>,
     pub tags: Vec<String>,
 }
@@ -66,7 +67,7 @@ pub(super) mod __xidl_in_HttpScopeMatrixService {
     #[derive(::serde::Serialize, ::serde::Deserialize)]
     pub struct MatrixBody {
         pub name: String,
-        #[serde(default)]
+        #[serde(default, skip_serializing_if = "Option::is_none")]
         pub alias: Option<String>,
         pub tags: Vec<String>,
     }
@@ -97,7 +98,7 @@ pub(super) mod __xidl_out_HttpScopeMatrixService {
     #[derive(::serde::Serialize, ::serde::Deserialize)]
     pub struct MatrixBody {
         pub name: String,
-        #[serde(default)]
+        #[serde(default, skip_serializing_if = "Option::is_none")]
         pub alias: Option<String>,
         pub tags: Vec<String>,
     }
@@ -158,12 +159,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpScopeMatrixServiceDefaultScopeRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )
@@ -214,12 +220,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpScopeMatrixServiceOverrideConsumesOnlyRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/x-www-form-urlencoded",
                 )
@@ -375,12 +386,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpScopeMatrixServiceOverrideBothMediaRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/x-www-form-urlencoded",
                 )
@@ -1835,12 +1851,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpSecurityMatrixServiceBearerOrCookieSecurityRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )
@@ -1950,12 +1971,17 @@ where
             ) {
                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
             }
-            let xidl_body_bytes = ::xidl_rust_axum::axum::body::to_bytes(
-                    body,
-                    usize::MAX,
+            let xidl_body_bytes = <::xidl_rust_axum::axum::body::Bytes as ::xidl_rust_axum::axum::extract::FromRequest<
+                S,
+            >>::from_request(
+                    ::xidl_rust_axum::axum::extract::Request::from_parts(parts, body),
+                    state,
                 )
                 .await
-                .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                .map_err(|err| ::xidl_rust_axum::Error::new(
+                    err.status().as_u16(),
+                    err.body_text(),
+                ))?;
             let xidl_body: HttpSecurityMatrixServiceOauthSecurityRequestInBody = ::xidl_rust_axum::DeserializeFactory::new(
                     "application/json",
                 )

@@ -147,12 +147,10 @@ pub(crate) fn render_attr_operation_from_http(
                         Some(xidl_parser::rest_hir::HttpBodyCodec::Text)
                     )
         ),
-        response_body_flatten: matches!(
+        response_body_is_value: matches!(
             http_op.http.response.body.shape,
-            xidl_parser::rest_hir::HttpResponseBodyShape::SingleValue { .. }
-        ) && matches!(
-            http_op.http.response.body.codec,
-            Some(xidl_parser::rest_hir::HttpBodyCodec::Text)
+            xidl_parser::rest_hir::HttpResponseBodyShape::ReturnOnly { .. }
+                | xidl_parser::rest_hir::HttpResponseBodyShape::SingleValue { .. }
         ),
         http_method: http_method_code(http_method_from_hir(http_op.meta.method)),
         http_method_fn: http_method_fn(http_method_from_hir(http_op.meta.method)),

@@ -10,7 +10,7 @@ pub(super) mod {{ module.name }} {
                         #[serde(rename = "{{ field.serde_rename }}")]
                     {% endif %}
                     {% if field.optional %}
-                        #[serde(default)]
+                        #[serde(default, skip_serializing_if = "Option::is_none")]
                     {% endif %}
                     pub {{ field.name }}: {{ field.ty }},
                 {% endfor %}

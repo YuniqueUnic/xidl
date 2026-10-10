@@ -1,6 +1,8 @@
 use super::super::model::TsRepresentationContext;
 use crate::generate::typescript::definition::TypeRefTarget;
-use crate::generate::typescript::definition::contexts::{FieldTypeContext, TsType};
+use crate::generate::typescript::definition::contexts::{
+    FieldTypeContext, ParamDeclContext, TsType,
+};
 use crate::generate::typescript::definition::type_expr::ts_type_for_type_spec;
 use xidl_parser::rest_hir::HttpOperation;
 
@@ -18,25 +20,39 @@ impl TsRepresentationContext {
             })
             .collect()
     }
-    pub(super) fn response_type(op: &HttpOperation, representations: &[Self]) -> Option<TsType> {
+    pub(super) fn response_type(
+        op: &HttpOperation,
+        representations: &[Self],
+        module_path: &[String],
+        response_fields: &[ParamDeclContext],
+    ) -> Option<TsType> {
         (!representations.is_empty()).then(|| {
-            let header_out_fields: Vec<FieldTypeContext> = op
-                .http
-                .response
-                .header
-                .iter()
-                .filter_map(|binding| match &binding.source {
-                    xidl_parser::rest_hir::HttpOutputSource::Param { name } => {
-                        Some(FieldTypeContext {
-                            prop: name.clone(),
-                            ty: TsType::Primitive("string".to_string()),
-                            optional: false,
-                            doc: Vec::new(),
-                        })
-                    }
-                    xidl_parser::rest_hir::HttpOutputSource::ReturnValue => None,
-                })
-                .collect();
+            let metadata_fields: Vec<FieldTypeContext> =
+                op.http
+                    .response
+                    .header
+                    .iter()
+                    .chain(&op.http.response.cookie)
+                    .filter_map(|binding| match &binding.source {
+                        xidl_parser::rest_hir::HttpOutputSource::Param { name } => {
+                            Some(FieldTypeContext {
+                                prop: name.clone(),
+                                ty: ts_type_for_type_spec(
+                                    &binding.ty,
+                                    module_path,
+                                    TypeRefTarget::Client,
+                                ),
+                                optional: response_fields.iter().any(|field| {
+                                    field.prop
+                            == crate::generate::typescript::definition::names::ts_prop_name(name)
+                            && field.optional
+                                }),
+                                doc: Vec::new(),
+                            })
+                        }
+                        xidl_parser::rest_hir::HttpOutputSource::ReturnValue => None,
+                    })
+                    .collect();
             TsType::Union(
                 representations
                     .iter()
@@ -59,7 +75,7 @@ impl TsRepresentationContext {
                                 doc: Vec::new(),
                             },
                         ];
-                        fields.extend(header_out_fields.iter().cloned());
+                        fields.extend(metadata_fields.iter().cloned());
                         TsType::InlineStruct(fields)
                     })
                     .collect(),
