@@ -330,12 +330,12 @@ impl HttpQueryTemplateServiceClient {
         lang: String,
         region: String,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users/{id}".to_string();
-        let path = path.replace("{id}", &id.to_string());
+        let xidl_path = "/users/{id}".to_string();
+        let xidl_path = xidl_path.replace("{id}", &id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -381,11 +381,11 @@ impl HttpQueryTemplateServiceClient {
         keyword: String,
         payload: String,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/search".to_string();
+        let xidl_path = "/search".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

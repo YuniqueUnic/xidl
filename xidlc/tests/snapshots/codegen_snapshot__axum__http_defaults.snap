@@ -1582,11 +1582,11 @@ impl HttpDefaultsServiceClient {
 impl HttpDefaultsServiceClient {
     #[allow(clippy::useless_conversion, unused_mut, unreachable_code, unused_variables)]
     pub async fn get_name(&self, name: String) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/get_name".to_string();
+        let xidl_path = "/get_name".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -1632,12 +1632,12 @@ impl HttpDefaultsServiceClient {
         page: u32,
         size: u32,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/list_orders/{uid}".to_string();
-        let path = path.replace("{uid}", &user_id.to_string());
+        let xidl_path = "/list_orders/{uid}".to_string();
+        let xidl_path = xidl_path.replace("{uid}", &user_id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -1682,11 +1682,11 @@ impl HttpDefaultsServiceClient {
         &self,
         req: CreateUserRequest,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users".to_string();
+        let xidl_path = "/users".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -1736,11 +1736,11 @@ impl HttpDefaultsServiceClient {
         &self,
         req: CreateUserRequest,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users/flat".to_string();
+        let xidl_path = "/users/flat".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -1789,11 +1789,11 @@ impl HttpDefaultsServiceClient {
         name: String,
         age: u32,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users/search".to_string();
+        let xidl_path = "/users/search".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -1844,11 +1844,11 @@ impl HttpDefaultsServiceClient {
         &self,
         req: CreateUserRequest,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users/preview".to_string();
+        let xidl_path = "/users/preview".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -1899,12 +1899,12 @@ impl HttpDefaultsServiceClient {
         id: u32,
         lang: String,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/v1/users/{id}".to_string();
-        let path = path.replace("{id}", &id.to_string());
+        let xidl_path = "/v1/users/{id}".to_string();
+        let xidl_path = xidl_path.replace("{id}", &id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -1949,12 +1949,12 @@ impl HttpDefaultsServiceClient {
         user_id: u32,
         locale: String,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/get_user_alias/{id}".to_string();
-        let path = path.replace("{id}", &user_id.to_string());
+        let xidl_path = "/get_user_alias/{id}".to_string();
+        let xidl_path = xidl_path.replace("{id}", &user_id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -1999,11 +1999,14 @@ impl HttpDefaultsServiceClient {
         id: u32,
         revision: u32,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users".to_string();
+        let xidl_path = "/users".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::DELETE, self.client.url(&path))
+            .request(
+                xidl_rust_axum::reqwest::Method::DELETE,
+                self.client.url(&xidl_path),
+            )
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -2049,11 +2052,11 @@ impl HttpDefaultsServiceClient {
         id: u32,
         revision: u32,
     ) -> Result<(), xidl_rust_axum::Error> {
-        let path = "/users/head".to_string();
+        let xidl_path = "/users/head".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::HEAD, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::HEAD, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -2093,11 +2096,14 @@ impl HttpDefaultsServiceClient {
         id: u32,
         revision: u32,
     ) -> Result<(), xidl_rust_axum::Error> {
-        let path = "/users/options".to_string();
+        let xidl_path = "/users/options".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::OPTIONS, self.client.url(&path))
+            .request(
+                xidl_rust_axum::reqwest::Method::OPTIONS,
+                self.client.url(&xidl_path),
+            )
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -2138,12 +2144,12 @@ impl HttpDefaultsServiceClient {
         name: String,
         age: u32,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users/{id}".to_string();
-        let path = path.replace("{id}", &user_id.to_string());
+        let xidl_path = "/users/{id}".to_string();
+        let xidl_path = xidl_path.replace("{id}", &user_id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::PUT, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::PUT, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -2196,12 +2202,12 @@ impl HttpDefaultsServiceClient {
         name: String,
         age: u32,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users/{id}".to_string();
-        let path = path.replace("{id}", &user_id.to_string());
+        let xidl_path = "/users/{id}".to_string();
+        let xidl_path = xidl_path.replace("{id}", &user_id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::PATCH, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::PATCH, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

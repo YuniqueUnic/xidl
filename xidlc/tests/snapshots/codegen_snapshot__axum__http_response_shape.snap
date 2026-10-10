@@ -531,11 +531,11 @@ impl HttpResponseShapeServiceClient {
 impl HttpResponseShapeServiceClient {
     #[allow(clippy::useless_conversion, unused_mut, unreachable_code, unused_variables)]
     pub async fn hello(&self) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/hello".to_string();
+        let xidl_path = "/hello".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -570,11 +570,11 @@ impl HttpResponseShapeServiceClient {
     pub async fn get_count(
         &self,
     ) -> Result<HttpResponseShapeServiceGetCountResponse, xidl_rust_axum::Error> {
-        let path = "/get_count".to_string();
+        let xidl_path = "/get_count".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -613,11 +613,11 @@ impl HttpResponseShapeServiceClient {
         a: i32,
         b: i32,
     ) -> Result<HttpResponseShapeServiceAddResponse, xidl_rust_axum::Error> {
-        let path = "/add".to_string();
+        let xidl_path = "/add".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -672,11 +672,11 @@ impl HttpResponseShapeServiceClient {
         &self,
         value: i32,
     ) -> Result<HttpResponseShapeServiceBumpResponse, xidl_rust_axum::Error> {
-        let path = "/bump".to_string();
+        let xidl_path = "/bump".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -722,11 +722,11 @@ impl HttpResponseShapeServiceClient {
     }
     #[allow(clippy::useless_conversion, unused_mut, unreachable_code, unused_variables)]
     pub async fn ping(&self) -> Result<(), xidl_rust_axum::Error> {
-        let path = "/ping".to_string();
+        let xidl_path = "/ping".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

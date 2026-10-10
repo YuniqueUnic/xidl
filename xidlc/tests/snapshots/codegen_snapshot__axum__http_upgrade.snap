@@ -140,11 +140,11 @@ impl HttpUpgradeServiceClient {
         &self,
         token: String,
     ) -> Result<::xidl_rust_axum::reqwest::Upgraded, xidl_rust_axum::Error> {
-        let path = "/upgrade/raw".to_string();
+        let xidl_path = "/upgrade/raw".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

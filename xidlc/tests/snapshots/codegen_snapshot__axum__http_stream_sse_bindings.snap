@@ -230,12 +230,12 @@ impl HttpStreamSseBindingsServiceClient {
         cursor: Option<String>,
         trace_id: String,
     ) -> Result<xidl_rust_axum::stream::Reader<ProjectEvent>, xidl_rust_axum::Error> {
-        let path = "/projects/{project_id}/events".to_string();
-        let path = path.replace("{project_id}", &project_id.to_string());
+        let xidl_path = "/projects/{project_id}/events".to_string();
+        let xidl_path = xidl_path.replace("{project_id}", &project_id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

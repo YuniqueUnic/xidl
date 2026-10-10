@@ -189,14 +189,14 @@ impl {{ ident }}Client {
     {% for method in methods %}
         #[allow(clippy::useless_conversion, unused_mut, unreachable_code, unused_variables)]
         pub async fn {{ method.name }}(&self{% if method.params | length > 0 %}, {{ method.params | join(", ") }}{% endif %}) -> Result<{% if method.is_client_stream %}{% if method.is_byte_stream %}xidl_rust_axum::stream::Writer<xidl_rust_axum::axum::body::Bytes, {{ method.response_ty }}>{% else %}xidl_rust_axum::stream::Writer<{{ method.request_item_ty }}, {{ method.response_ty }}>{% endif %}{% elif method.is_bidi_stream %}xidl_rust_axum::stream::ReaderWriter<{{ method.request_item_ty }}, {{ method.response_ty }}>{% elif method.is_server_stream %}{% if method.is_byte_stream %}xidl_rust_axum::stream::ByteReader{% else %}xidl_rust_axum::stream::Reader<{{ method.response_ty }}>{% endif %}{% elif method.is_upgrade %}::xidl_rust_axum::reqwest::Upgraded{% else %}{{ method.response_ty }}{% endif %}, {% if method.raises | length > 0 %}{{ method.error_ty }}{% else %}xidl_rust_axum::Error{% endif %}> {
-            let path = "{{ method.path }}".to_string();
+            let xidl_path = "{{ method.path }}".to_string();
             {% for param in method.path_params %}
-                let path = path.replace("{{ ['{', param.path_template_name, '}'] | join}}", &{{ param.name }}.to_string());
+                let xidl_path = xidl_path.replace("{{ ['{', param.path_template_name, '}'] | join}}", &{{ param.name }}.to_string());
             {% endfor %}
             let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::{{ method.reqwest_method }}, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::{{ method.reqwest_method }}, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
             req.headers_mut().insert(
@@ -354,7 +354,7 @@ impl {{ ident }}Client {
                 {% endfor %}
             {% endif %}
             {% if method.is_bidi_stream %}
-                let mut ws_url = self.client.ws_url(&path)?;
+                let mut ws_url = self.client.ws_url(&xidl_path)?;
                 {% if method.query_params | length > 0 %}
                     let query = {{ method.struct_prefix }}RequestOutQuery {
                         {% for param in method.query_params %}

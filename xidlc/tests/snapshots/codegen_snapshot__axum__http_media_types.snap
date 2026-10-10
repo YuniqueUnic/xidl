@@ -304,11 +304,11 @@ impl HttpMediaServiceClient {
         name: String,
         age: u32,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/submit_form".to_string();
+        let xidl_path = "/submit_form".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -361,11 +361,11 @@ impl HttpMediaServiceClient {
         &self,
         id: String,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/fetch_msgpack".to_string();
+        let xidl_path = "/fetch_msgpack".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

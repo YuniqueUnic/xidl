@@ -530,12 +530,12 @@ impl FilesClient {
         id: String,
         if_none_match: Option<String>,
     ) -> Result<FileMeta, FilesGetFileError> {
-        let path = "/files/{id}".to_string();
-        let path = path.replace("{id}", &id.to_string());
+        let xidl_path = "/files/{id}".to_string();
+        let xidl_path = xidl_path.replace("{id}", &id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -637,12 +637,15 @@ impl FilesClient {
         id: String,
         if_match: String,
     ) -> Result<(), FilesDeleteFileError> {
-        let path = "/files/{id}".to_string();
-        let path = path.replace("{id}", &id.to_string());
+        let xidl_path = "/files/{id}".to_string();
+        let xidl_path = xidl_path.replace("{id}", &id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::DELETE, self.client.url(&path))
+            .request(
+                xidl_rust_axum::reqwest::Method::DELETE,
+                self.client.url(&xidl_path),
+            )
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

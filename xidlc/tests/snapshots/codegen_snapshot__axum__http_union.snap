@@ -556,11 +556,11 @@ impl FilesClient {
         &self,
         path: String,
     ) -> Result<FileResponse, FilesGetMetaError> {
-        let path = "/meta".to_string();
+        let xidl_path = "/meta".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -646,11 +646,11 @@ impl FilesClient {
         &self,
         path: String,
     ) -> Result<FilesGetFileResponse, FilesGetFileError> {
-        let path = "/file".to_string();
+        let xidl_path = "/file".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

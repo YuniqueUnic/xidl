@@ -278,11 +278,11 @@ impl HttpClientStreamReportServiceClient {
         >,
         xidl_rust_axum::Error,
     > {
-        let path = "/uploads/parts".to_string();
+        let xidl_path = "/uploads/parts".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

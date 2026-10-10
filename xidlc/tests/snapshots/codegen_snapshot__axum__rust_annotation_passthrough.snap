@@ -323,12 +323,12 @@ impl RustHttpClient {
 impl RustHttpClient {
     #[allow(clippy::useless_conversion, unused_mut, unreachable_code, unused_variables)]
     pub async fn get_user(&self, user_id: u32) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/users/{user_id}".to_string();
-        let path = path.replace("{user_id}", &user_id.to_string());
+        let xidl_path = "/users/{user_id}".to_string();
+        let xidl_path = xidl_path.replace("{user_id}", &user_id.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -363,11 +363,11 @@ impl RustHttpClient {
     pub async fn get_attribute_display_name(
         &self,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/attribute/display_name".to_string();
+        let xidl_path = "/attribute/display_name".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -403,11 +403,11 @@ impl RustHttpClient {
         &self,
         display_name: String,
     ) -> Result<(), xidl_rust_axum::Error> {
-        let path = "/attribute/display_name".to_string();
+        let xidl_path = "/attribute/display_name".to_string();
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::POST, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()

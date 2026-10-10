@@ -296,12 +296,12 @@ impl HttpCatchAllServiceClient {
         &self,
         rel_path: String,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/files/{*path}".to_string();
-        let path = path.replace("{*path}", &rel_path.to_string());
+        let xidl_path = "/files/{*path}".to_string();
+        let xidl_path = xidl_path.replace("{*path}", &rel_path.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
@@ -338,12 +338,12 @@ impl HttpCatchAllServiceClient {
         key: String,
         version: String,
     ) -> Result<String, xidl_rust_axum::Error> {
-        let path = "/assets/{*key}".to_string();
-        let path = path.replace("{*key}", &key.to_string());
+        let xidl_path = "/assets/{*key}".to_string();
+        let xidl_path = xidl_path.replace("{*key}", &key.to_string());
         let mut req = self
             .client
             .http()
-            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&path))
+            .request(xidl_rust_axum::reqwest::Method::GET, self.client.url(&xidl_path))
             .build()
             .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
         req.headers_mut()
