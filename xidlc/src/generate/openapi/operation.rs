@@ -103,6 +103,14 @@ pub(crate) fn render_http_operation(
 
     let request_schema = match &op.http.request.body.shape {
         HttpRequestBodyShape::Empty => None,
+        HttpRequestBodyShape::SingleValue { ty, .. }
+            if xidl_parser::rest_hir::is_byte_sequence(ty) =>
+        {
+            // Raw byte payloads: binary string, no element schema.
+            Some(RefOr::T(Schema::from(
+                ObjectBuilder::new().schema_type(Type::String),
+            )))
+        }
         HttpRequestBodyShape::SingleValue { ty, .. } => Some(schema_for_type(ty)),
         HttpRequestBodyShape::Object { fields } => {
             let mut object = ObjectBuilder::new().schema_type(Type::Object);

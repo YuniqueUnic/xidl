@@ -48,12 +48,14 @@ export class {{ client_name }}Client {
         {% elif method.return_ty.kind == "Void" %}return;
         {% else %}return await decodeResponseBody<{{ render_type(method.return_ty) }}>(resp, "{{ method.response_content_type }}", this.codecs);
         {% endif %}
-        {% else %}{% if method.body_single %}const body = {% if method.request_schema_ref %}parsed{% else %}{{ method.body_single }}{% endif %};
-        {% elif method.body_entries | length > 0 %}const body = { {% for entry in method.body_entries %}"{{ entry.raw_name }}": {% if method.request_schema_ref %}parsed["{{ entry.key_name }}"]{% else %}{{ entry.access }}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %} };
+        {% else %}{% if method.body_single %}const xidlBody = {% if method.request_schema_ref %}parsed{% else %}{{ method.body_single }}{% endif %};
+        {% elif method.body_entries | length > 0 %}const xidlBody = { {% for entry in method.body_entries %}"{{ entry.raw_name }}": {% if method.request_schema_ref %}parsed["{{ entry.key_name }}"]{% else %}{{ entry.access }}{% endif %}{% if not loop.last %}, {% endif %}{% endfor %} };
         {% endif %}{% if method.body_single or method.body_entries | length > 0 %}headers.set("Content-Type", "{{ method.request_content_type }}");
         {% endif %}headers.set("Accept", "{% if method.representations | length > 0 %}{{ method.union_accept }}{% else %}{{ method.response_content_type }}{% endif %}");
-        const resp = await this.fetchImpl(url, { method: "{{ method.http_method }}", headers{% if method.body_single or method.body_entries | length > 0 %}, body: encodeRequestBody(body, "{{ method.request_content_type }}", this.codecs, {% if method.body_schema_ref %}ifaceSchemas.{{ method.body_schema_ref }}Schema{% else %}undefined{% endif %}){% endif %} });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "{{ method.http_method }}", headers{% if method.body_single or method.body_entries | length > 0 %}, body: encodeRequestBody(xidlBody, "{{ method.request_content_type }}", this.codecs, {% if method.body_schema_ref %}ifaceSchemas.{{ method.body_schema_ref }}Schema{% else %}undefined{% endif %}){% endif %} });
+        {# Raised 2xx statuses (request-correlated alternates) precede the ok check. #}
+        {% for ex in method.raises %}{% if ex.status < 300 %}if (resp.status === {{ ex.status }}) { await this.{{ method.raise_helper }}(resp); }
+{% endif %}{% endfor %}        if (!resp.ok) {
             {% if method.raises | length > 0 %}await this.{{ method.raise_helper }}(resp);
             {% else %}throw await parseXidlError(resp);
             {% endif %}

@@ -27,7 +27,7 @@ use render_types::{render_request_types, render_response_types};
 use xidl_parser::hir;
 use xidl_parser::rest_hir::{
     HttpOperation, HttpOutputSource, HttpRequestBodyShape, HttpResponseBodyShape, RestHirDocument,
-    semantics::HttpStreamKind,
+    is_byte_sequence, semantics::HttpStreamKind,
 };
 
 pub(crate) fn render_interface(
@@ -99,6 +99,17 @@ fn build_method_model(
     let stream_in_name = format!("{prefix}Request");
     let stream_out_name = format!("{prefix}Response");
 
+    // A lone `sequence<octet>` body is raw bytes: it carries no schema and
+    // surfaces to clients as `Uint8Array`.
+    let byte_body_param = match &op.http.request.body.shape {
+        HttpRequestBodyShape::SingleValue { source_param, ty, .. }
+            if is_byte_sequence(ty) =>
+        {
+            Some(source_param.clone())
+        }
+        _ => None,
+    };
+
     let request_fields = op
         .signature
         .params
@@ -110,6 +121,7 @@ fn build_method_model(
                     | xidl_parser::rest_hir::HttpSignatureParamDirection::InOut
             )
         })
+        .filter(|p| byte_body_param.as_deref() != Some(p.name.as_str()))
         .map(|p| ParamDeclContext {
             prop: crate::generate::typescript::definition::names::ts_prop_name(&p.name),
             // The iface file is separate from the model file, so model types are
@@ -249,6 +261,7 @@ fn build_method_model(
         HttpRequestBodyShape::SingleValue {
             source_param,
             flatten,
+            ty,
             ..
         } => {
             let entries = vec![RequestPayloadEntry {
@@ -260,7 +273,8 @@ fn build_method_model(
                 op.http.request.body.codec,
                 Some(xidl_parser::rest_hir::HttpBodyCodec::Text)
             );
-            let single = (*flatten || is_text).then(|| source_param.clone());
+            let single = (*flatten || is_text || is_byte_sequence(ty))
+                .then(|| source_param.clone());
             (entries, single)
         }
         HttpRequestBodyShape::Object { fields } => {

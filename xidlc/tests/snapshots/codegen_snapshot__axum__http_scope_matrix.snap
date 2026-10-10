@@ -60,7 +60,7 @@ pub trait HttpScopeMatrixService {
     )]
     async fn deprecated_window(&self, id: String) -> ::xidl_rust_axum::Result<String>;
 }
-#[allow(non_snake_case, unused_imports)]
+#[allow(non_snake_case, non_camel_case_types, non_upper_case_globals, unused_imports)]
 pub(super) mod __xidl_in_HttpScopeMatrixService {
     use super::*;
     #[derive(::serde::Serialize, ::serde::Deserialize)]
@@ -91,7 +91,7 @@ pub(super) mod __xidl_in_HttpScopeMatrixService {
         }
     }
 }
-#[allow(non_snake_case, unused_imports)]
+#[allow(non_snake_case, non_camel_case_types, non_upper_case_globals, unused_imports)]
 pub(super) mod __xidl_out_HttpScopeMatrixService {
     use super::*;
     #[derive(::serde::Serialize, ::serde::Deserialize)]
@@ -1736,11 +1736,11 @@ pub trait HttpSecurityMatrixService {
     ) -> ::xidl_rust_axum::Result<String>;
     async fn public_ping(&self) -> ::xidl_rust_axum::Result<String>;
 }
-#[allow(non_snake_case, unused_imports)]
+#[allow(non_snake_case, non_camel_case_types, non_upper_case_globals, unused_imports)]
 pub(super) mod __xidl_in_HttpSecurityMatrixService {
     use super::*;
 }
-#[allow(non_snake_case, unused_imports)]
+#[allow(non_snake_case, non_camel_case_types, non_upper_case_globals, unused_imports)]
 pub(super) mod __xidl_out_HttpSecurityMatrixService {
     use super::*;
 }

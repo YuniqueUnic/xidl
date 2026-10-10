@@ -70,7 +70,8 @@ export class HttpDefaultsServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -96,7 +97,8 @@ export class HttpDefaultsServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -117,11 +119,12 @@ export class HttpDefaultsServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = { "req": parsed["req"] };
+            const xidlBody = { "req": parsed["req"] };
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/plain");
-        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServiceCreateUserRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServiceCreateUserRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -142,11 +145,12 @@ export class HttpDefaultsServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = parsed;
+            const xidlBody = parsed;
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/plain");
-        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.models.CreateUserRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.models.CreateUserRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -167,11 +171,12 @@ export class HttpDefaultsServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = { "name": parsed["name"], "age": parsed["age"] };
+            const xidlBody = { "name": parsed["name"], "age": parsed["age"] };
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/plain");
-        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServiceSearchUserRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServiceSearchUserRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -192,11 +197,12 @@ export class HttpDefaultsServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = { "req": parsed["req"] };
+            const xidlBody = { "req": parsed["req"] };
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/plain");
-        const resp = await this.fetchImpl(url, { method: "GET", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServicePreviewUserRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "GET", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServicePreviewUserRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -221,7 +227,8 @@ export class HttpDefaultsServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -246,7 +253,8 @@ export class HttpDefaultsServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -271,7 +279,8 @@ export class HttpDefaultsServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "DELETE", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -296,7 +305,8 @@ export class HttpDefaultsServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "");
         const resp = await this.fetchImpl(url, { method: "HEAD", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -321,7 +331,8 @@ export class HttpDefaultsServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "");
         const resp = await this.fetchImpl(url, { method: "OPTIONS", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -343,11 +354,12 @@ export class HttpDefaultsServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = { "name": parsed["name"], "age": parsed["age"] };
+            const xidlBody = { "name": parsed["name"], "age": parsed["age"] };
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/plain");
-        const resp = await this.fetchImpl(url, { method: "PUT", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServiceReplaceUserRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "PUT", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServiceReplaceUserRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -369,11 +381,12 @@ export class HttpDefaultsServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = { "name": parsed["name"], "age": parsed["age"] };
+            const xidlBody = { "name": parsed["name"], "age": parsed["age"] };
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/plain");
-        const resp = await this.fetchImpl(url, { method: "PATCH", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServicePatchUserRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "PATCH", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.HttpDefaultsServicePatchUserRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }

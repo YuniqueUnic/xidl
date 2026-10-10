@@ -70,7 +70,8 @@ export class HttpCatchAllServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -95,7 +96,8 @@ export class HttpCatchAllServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }

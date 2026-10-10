@@ -66,10 +66,10 @@
                                             }
                                         }
                                     {% elif member.optional %}
-                                        if let Some(value) = &err.{{ member.field }} {
-                                            if let Ok(header_value) = ::xidl_rust_axum::axum::http::header::HeaderValue::from_str(&value.to_string()) {
-                                                headers.insert("{{ member.wire_name }}", header_value);
-                                            }
+                                        if let Some(value) = &err.{{ member.field }}
+                                            && let Ok(header_value) = ::xidl_rust_axum::axum::http::header::HeaderValue::from_str(&value.to_string())
+                                        {
+                                            headers.insert("{{ member.wire_name }}", header_value);
                                         }
                                     {% else %}
                                         if let Ok(header_value) = ::xidl_rust_axum::axum::http::header::HeaderValue::from_str(&err.{{ member.field }}.to_string()) {
@@ -358,7 +358,13 @@
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
-                        {% if method.body_params | length > 0 %}
+                        {% if method.body_params | length > 0 and method.request_content_type == "application/octet-stream" %}
+                            {# Raw byte payload: the bytes are the value; senders label them via Content-Type. #}
+                            let body = ::xidl_rust_axum::axum::body::to_bytes(body, usize::MAX)
+                            .await
+                            .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?
+                            .to_vec();
+                        {% elif method.body_params | length > 0 %}
                             if !::xidl_rust_axum::http::content_type_matches(xidl_headers, "{{ method.request_content_type }}") {
                                 return Err(::xidl_rust_axum::Error::unsupported_media_type());
                             }
@@ -367,6 +373,7 @@
                             .map_err(|err| ::xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
                             let xidl_body: {{ method.struct_prefix }}RequestInBody = ::xidl_rust_axum::DeserializeFactory::new("{{ method.request_content_type }}")
                             .from_slice(&xidl_body_bytes)?;
+                            {% if method.request_content_type != "application/octet-stream" %}
                             {% if method.request_body_flatten %}
                                 let {{ method.body_params[0].name }} = xidl_body;
                             {% else %}
@@ -375,6 +382,7 @@
                                         {{ param.name }},
                                     {% endfor %}
                                 } = xidl_body;
+                            {% endif %}
                             {% endif %}
                         {% endif %}
                         Ok(Self {

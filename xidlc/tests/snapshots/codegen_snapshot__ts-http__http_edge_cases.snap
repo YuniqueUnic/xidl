@@ -70,7 +70,8 @@ export class HttpEdgeCasesServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "");
         const resp = await this.fetchImpl(url, { method: "HEAD", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -95,7 +96,8 @@ export class HttpEdgeCasesServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -119,7 +121,8 @@ export class HttpEdgeCasesServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -144,7 +147,8 @@ export class HttpEdgeCasesServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -169,7 +173,8 @@ export class HttpEdgeCasesServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }

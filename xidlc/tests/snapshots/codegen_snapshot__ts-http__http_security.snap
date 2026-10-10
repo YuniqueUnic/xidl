@@ -70,7 +70,8 @@ export class HttpSecurityServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -92,7 +93,8 @@ export class HttpSecurityServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -113,11 +115,12 @@ export class HttpSecurityServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = parsed;
+            const xidlBody = parsed;
         headers.set("Content-Type", "text/plain");
         headers.set("Accept", "text/plain");
-        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(body, "text/plain", this.codecs, ifaceSchemas.HttpSecurityServiceSearchUserRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(xidlBody, "text/plain", this.codecs, ifaceSchemas.HttpSecurityServiceSearchUserRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -139,7 +142,8 @@ export class HttpSecurityServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }

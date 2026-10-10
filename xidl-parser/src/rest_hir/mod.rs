@@ -1,5 +1,5 @@
 mod attr;
-mod mapping;
+pub mod mapping;
 mod model;
 mod project;
 mod project_params;
@@ -11,6 +11,7 @@ mod validate;
 
 use serde::{Deserialize, Serialize};
 
+pub use mapping::is_byte_sequence;
 pub use model::*;
 pub use project::project;
 pub use semantics::{UpgradeMode, WebSocketCodec, WebSocketConfig};

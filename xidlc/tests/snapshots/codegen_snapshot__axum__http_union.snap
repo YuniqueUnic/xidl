@@ -37,6 +37,14 @@ pub struct NotFound {
     pub code: u32,
     pub msg: String,
 }
+#[derive(Debug, Clone, PartialEq, ::serde::Serialize, ::serde::Deserialize)]
+#[derive(Default)]
+pub struct Gone {
+    #[serde(skip)]
+    pub etag: Option<String>,
+    pub code: u32,
+    pub msg: String,
+}
 /// HTTP representation union: each case responds with its own media type
 /// and is untagged on the wire.
 #[derive(Debug, Clone, ::serde::Serialize, ::serde::Deserialize)]
@@ -115,6 +123,7 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetMetaError {
 #[derive(Debug)]
 pub enum FilesGetFileError {
     NotFound(NotFound),
+    Gone(Gone),
     Framework(xidl_rust_axum::Error),
 }
 impl From<xidl_rust_axum::Error> for FilesGetFileError {
@@ -153,14 +162,45 @@ impl ::xidl_rust_axum::axum::response::IntoResponse for FilesGetFileError {
                 *response.headers_mut() = headers;
                 response
             }
+            Self::Gone(err) => {
+                let mut headers = ::xidl_rust_axum::axum::http::HeaderMap::new();
+                if let Some(value) = &err.etag
+                    && let Ok(header_value) = ::xidl_rust_axum::axum::http::header::HeaderValue::from_str(
+                        &value.to_string(),
+                    )
+                {
+                    headers.insert("ETag", header_value);
+                }
+                let body = match xidl_rust_axum::serde_json::to_vec(&err) {
+                    Ok(body) => body,
+                    Err(err) => {
+                        return ::xidl_rust_axum::axum::response::IntoResponse::into_response(
+                            xidl_rust_axum::Error::new(500, format!("{err:?}")),
+                        );
+                    }
+                };
+                let mut response = ::xidl_rust_axum::axum::http::Response::builder()
+                    .status(
+                        ::xidl_rust_axum::axum::http::StatusCode::from_u16(410u16)
+                            .unwrap(),
+                    )
+                    .header(
+                        ::xidl_rust_axum::axum::http::header::CONTENT_TYPE,
+                        "application/json",
+                    )
+                    .body(::xidl_rust_axum::axum::body::Body::from(body))
+                    .expect("error response should build");
+                *response.headers_mut() = headers;
+                response
+            }
         }
     }
 }
-#[allow(non_snake_case, unused_imports)]
+#[allow(non_snake_case, non_camel_case_types, non_upper_case_globals, unused_imports)]
 pub(super) mod __xidl_in_Files {
     use super::*;
 }
-#[allow(non_snake_case, unused_imports)]
+#[allow(non_snake_case, non_camel_case_types, non_upper_case_globals, unused_imports)]
 pub(super) mod __xidl_out_Files {
     use super::*;
 }
@@ -699,6 +739,26 @@ impl FilesClient {
                     .await
                     .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
                 return Err(FilesGetFileError::NotFound(value));
+            }
+            if status.as_u16() == 410 {
+                let headers = resp.headers().clone();
+                let mut value: Gone = resp
+                    .json::<Gone>()
+                    .await
+                    .map_err(|err| xidl_rust_axum::Error::new(500, format!("{err:?}")))?;
+                value.etag = match headers.get("ETag") {
+                    Some(header_value) => {
+                        let header_str = header_value
+                            .to_str()
+                            .map_err(|err| xidl_rust_axum::Error::new(
+                                400,
+                                format!("{err:?}"),
+                            ))?;
+                        Some(header_str.to_string())
+                    }
+                    None => None,
+                };
+                return Err(FilesGetFileError::Gone(value));
             }
             let body = resp.json::<xidl_rust_axum::ErrorBody>().await.ok();
             Err(

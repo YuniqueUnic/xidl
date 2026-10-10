@@ -70,7 +70,8 @@ import {
                 const url = joinUrl(this.baseUrl, xidlPath);
                 headers.set("Accept", "application/json");
             const resp = await this.fetchImpl(url, { method: "GET", headers });
-            if (!resp.ok) {
+            
+                    if (!resp.ok) {
                 throw await parseXidlError(resp);
                 
             }
@@ -91,11 +92,12 @@ import {
                     xidlPath = `${xidlPath}?${queryString}`;
                 }
                 const url = joinUrl(this.baseUrl, xidlPath);
-                const body = { "item": parsed["item"] };
+                const xidlBody = { "item": parsed["item"] };
             headers.set("Content-Type", "application/json");
             headers.set("Accept", "");
-            const resp = await this.fetchImpl(url, { method: "PUT", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.nm.ItemServicePutItemRequestSchema) });
-            if (!resp.ok) {
+            const resp = await this.fetchImpl(url, { method: "PUT", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.nm.ItemServicePutItemRequestSchema) });
+            
+                    if (!resp.ok) {
                 throw await parseXidlError(resp);
                 
             }
@@ -117,7 +119,8 @@ import {
                 const url = joinUrl(this.baseUrl, xidlPath);
                 headers.set("Accept", "application/json");
             const resp = await this.fetchImpl(url, { method: "GET", headers });
-            if (!resp.ok) {
+            
+                    if (!resp.ok) {
                 throw await parseXidlError(resp);
                 
             }
@@ -159,7 +162,8 @@ import {
                     const url = joinUrl(this.baseUrl, xidlPath);
                     headers.set("Accept", "application/json");
                 const resp = await this.fetchImpl(url, { method: "GET", headers });
-                if (!resp.ok) {
+                
+                        if (!resp.ok) {
                     throw await parseXidlError(resp);
                     
                 }

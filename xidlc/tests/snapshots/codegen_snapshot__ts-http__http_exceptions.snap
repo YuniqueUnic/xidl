@@ -73,7 +73,8 @@ export class FilesClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "application/json");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             await this.throwGetFileError(resp);
             
         }
@@ -98,7 +99,8 @@ export class FilesClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "");
         const resp = await this.fetchImpl(url, { method: "DELETE", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             await this.throwDeleteFileError(resp);
             
         }

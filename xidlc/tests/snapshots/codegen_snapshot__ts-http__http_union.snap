@@ -72,7 +72,8 @@ export class FilesClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "application/json, application/octet-stream");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             await this.throwGetMetaError(resp);
             
         }
@@ -109,7 +110,8 @@ export class FilesClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "application/json, application/octet-stream");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             await this.throwGetFileError(resp);
             
         }

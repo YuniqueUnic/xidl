@@ -71,7 +71,8 @@ export class HttpAnnoServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -92,11 +93,12 @@ export class HttpAnnoServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = { "name": parsed["name"], "age": parsed["age"] };
+            const xidlBody = { "name": parsed["name"], "age": parsed["age"] };
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/plain");
-        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.HttpAnnoServiceCreateUserRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.HttpAnnoServiceCreateUserRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -120,7 +122,8 @@ export class HttpAnnoServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -145,7 +148,8 @@ export class HttpAnnoServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "GET", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -170,7 +174,8 @@ export class HttpAnnoServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -191,11 +196,12 @@ export class HttpAnnoServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = { "a": parsed["a"], "b": parsed["b"] };
+            const xidlBody = { "a": parsed["a"], "b": parsed["b"] };
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "application/json");
-        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(body, "application/json", this.codecs, ifaceSchemas.HttpAnnoServiceAddRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(xidlBody, "application/json", this.codecs, ifaceSchemas.HttpAnnoServiceAddRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -218,11 +224,12 @@ export class HttpAnnoServiceClient {
                 xidlPath = `${xidlPath}?${queryString}`;
             }
             const url = joinUrl(this.baseUrl, xidlPath);
-            const body = parsed;
+            const xidlBody = parsed;
         headers.set("Content-Type", "text/plain");
         headers.set("Accept", "application/json");
-        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(body, "text/plain", this.codecs, ifaceSchemas.HttpAnnoServiceBumpRequestSchema) });
-        if (!resp.ok) {
+        const resp = await this.fetchImpl(url, { method: "POST", headers, body: encodeRequestBody(xidlBody, "text/plain", this.codecs, ifaceSchemas.HttpAnnoServiceBumpRequestSchema) });
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -246,7 +253,8 @@ export class HttpAnnoServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "text/plain");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }
@@ -270,7 +278,8 @@ export class HttpAnnoServiceClient {
             const url = joinUrl(this.baseUrl, xidlPath);
             headers.set("Accept", "");
         const resp = await this.fetchImpl(url, { method: "POST", headers });
-        if (!resp.ok) {
+        
+                if (!resp.ok) {
             throw await parseXidlError(resp);
             
         }

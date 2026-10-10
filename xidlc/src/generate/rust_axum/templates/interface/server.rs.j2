@@ -315,6 +315,13 @@ T: {{ ident }} + Send + Sync + 'static,
                                                         .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?{% endif %}
                                                     }).collect()
                                                 };
+                                            {% elif param.optional %}
+                                                let {{ param.name }}_header_value: Option<String> = {
+                                                    let value = &resp_value.{{ param.name }};
+                                                    {% if param.header_item_is_string %}value.clone(){% elif param.header_item_is_primitive %}value.as_ref().map(|value| value.to_string()){% else %}value.as_ref().map(|value| xidl_rust_axum::serde_json::to_string(value))
+                                                    .transpose()
+                                                    .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?{% endif %}
+                                                };
                                             {% else %}
                                                 let {{ param.name }}_header_value: String = {
                                                     let value = &resp_value.{{ param.name }};
@@ -330,6 +337,13 @@ T: {{ ident }} + Send + Sync + 'static,
                                                         {% if param.header_item_is_string %}value.clone(){% elif param.header_item_is_primitive %}value.to_string(){% else %}xidl_rust_axum::serde_json::to_string(value)
                                                         .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?{% endif %}
                                                     }).collect()
+                                                };
+                                            {% elif param.optional %}
+                                                let {{ param.name }}_header_value: Option<String> = {
+                                                    let value = &resp_value;
+                                                    {% if param.header_item_is_string %}value.clone(){% elif param.header_item_is_primitive %}value.as_ref().map(|value| value.to_string()){% else %}value.as_ref().map(|value| xidl_rust_axum::serde_json::to_string(value))
+                                                    .transpose()
+                                                    .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?{% endif %}
                                                 };
                                             {% else %}
                                                 let {{ param.name }}_header_value: String = {
@@ -458,6 +472,12 @@ T: {{ ident }} + Send + Sync + 'static,
                                                 let header_value = ::xidl_rust_axum::axum::http::HeaderValue::from_str(&value_str)
                                                 .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
                                                 resp.headers_mut().append(header_name.clone(), header_value);
+                                            }
+                                        {% elif param.optional %}
+                                            if let Some(value_str) = &{{ param.name }}_header_value {
+                                                let header_value = ::xidl_rust_axum::axum::http::HeaderValue::from_str(value_str)
+                                                .map_err(|err| xidl_rust_axum::Error::new(400, format!("{err:?}")))?;
+                                                resp.headers_mut().insert(header_name, header_value);
                                             }
                                         {% else %}
                                             let header_value = ::xidl_rust_axum::axum::http::HeaderValue::from_str(&{{ param.name }}_header_value)
