@@ -488,13 +488,13 @@ pub struct HttpAnnoServiceGetCountResponse {
 #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
 impl From<HttpAnnoServiceGetCountResponse> for HttpAnnoServiceGetCountResponseOutBody {
     fn from(value: HttpAnnoServiceGetCountResponse) -> Self {
-        value.count
+        Self { count: value.count }
     }
 }
 #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
 impl From<HttpAnnoServiceGetCountResponseInBody> for HttpAnnoServiceGetCountResponse {
     fn from(value: HttpAnnoServiceGetCountResponseInBody) -> Self {
-        Self { count: value }
+        Self { count: value.count }
     }
 }
 pub struct HttpAnnoServiceServer<T> {

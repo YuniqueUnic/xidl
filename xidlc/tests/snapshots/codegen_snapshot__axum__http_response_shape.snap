@@ -49,14 +49,14 @@ pub struct HttpResponseShapeServiceGetCountResponse {
 impl From<HttpResponseShapeServiceGetCountResponse>
 for HttpResponseShapeServiceGetCountResponseOutBody {
     fn from(value: HttpResponseShapeServiceGetCountResponse) -> Self {
-        value.count
+        Self { count: value.count }
     }
 }
 #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
 impl From<HttpResponseShapeServiceGetCountResponseInBody>
 for HttpResponseShapeServiceGetCountResponse {
     fn from(value: HttpResponseShapeServiceGetCountResponseInBody) -> Self {
-        Self { count: value }
+        Self { count: value.count }
     }
 }
 #[derive(::serde::Serialize)]

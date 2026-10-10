@@ -476,22 +476,14 @@
                     #[allow(clippy::useless_conversion, unreachable_code, unused_variables)]
                     impl From<{{ method.response_struct }}> for {{ method.struct_prefix }}ResponseOutBody {
                         fn from(value: {{ method.response_struct }}) -> Self {
-                            {% if method.response_body_flatten %}
+                            Self {
                                 {% if method.response_include_return %}
-                                    {{ method.ret_out_expr | replace("resp_value", "value.r#return") }}
-                                {% else %}
-                                    {{ method.response_body_params[0].field_out_expr }}
+                                    r#return{% if "r#return" != method.ret_out_expr | replace("resp_value", "value.r#return") %}: {{ method.ret_out_expr | replace("resp_value", "value.r#return") }}{% endif %},
                                 {% endif %}
-                            {% else %}
-                                Self {
-                                    {% if method.response_include_return %}
-                                        r#return{% if "r#return" != method.ret_out_expr | replace("resp_value", "value.r#return") %}: {{ method.ret_out_expr | replace("resp_value", "value.r#return") }}{% endif %},
-                                    {% endif %}
-                                    {% for param in method.response_body_params %}
-                                        {{ param.name }}{% if param.name != param.field_out_expr %}: {{ param.field_out_expr }}{% endif %},
-                                    {% endfor %}
-                                }
-                            {% endif %}
+                                {% for param in method.response_body_params %}
+                                    {{ param.name }}{% if param.name != param.field_out_expr %}: {{ param.field_out_expr }}{% endif %},
+                                {% endfor %}
+                            }
                         }
                     }
                 {% endif %}
@@ -502,19 +494,10 @@
                         fn from(value: {{ method.struct_prefix }}ResponseInBody) -> Self {
                             Self {
                                 {% if method.response_include_return %}
-                                    {% if method.response_body_flatten %}
-                                        r#return: {{ method.ret_in_expr | replace("body.r#return", "value") | replace("body", "value") }},
-                                    {% else %}
-                                        r#return{% if "r#return" != method.ret_in_expr | replace("body", "value.r#return") %}: {{ method.ret_in_expr | replace("body", "value.r#return") }}{% endif %},
-                                    {% endif %}
+                                    r#return{% if "r#return" != method.ret_in_expr | replace("body", "value.r#return") %}: {{ method.ret_in_expr | replace("body", "value.r#return") }}{% endif %},
                                 {% endif %}
                                 {% for param in method.response_body_params %}
-                                    {% if method.response_body_flatten %}
-                                        {% set expr = param.field_in_expr | replace("value." ~ param.name, "value") %}
-                                        {{ param.name }}{% if param.name != expr %}: {{ expr }}{% endif %},
-                                    {% else %}
-                                        {{ param.name }}{% if param.name != param.field_in_expr %}: {{ param.field_in_expr }}{% endif %},
-                                    {% endif %}
+                                    {{ param.name }}{% if param.name != param.field_in_expr %}: {{ param.field_in_expr }}{% endif %},
                                 {% endfor %}
                                 {% for param in method.response_header_params %}
                                     {{ param.name }}: ::core::default::Default::default(),
